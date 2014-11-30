@@ -8,11 +8,14 @@ LINUXDIR	?= linux
 IMAGE		?= zImage
 DTB		?= $(BOARD)
 
+MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
+UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
+
 export CROSS_COMPILE
 
 .PHONY: all clean mrproper
 
-all: bootstrap kernel dtb
+all: bootstrap ubi
 
 at91bootstrap/.config: at91bootstrap/board/$(board)/$(DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
@@ -49,11 +52,26 @@ kernel: $(IMAGE)
 dtb: $(DTB).dtb
 	ln -sf initramfs/$< $@
 
+persistant:
+	install -d $@
+
+persistant.ubifs: persistant
+	@echo -e "\e[1mGenerating persistant.ubifs...\e[0m"
+	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
+
+$(BOARD).ubi: ubi.ini kernel dtb persistant.ubifs
+	@echo -e "\e[1mGenerating $@...\e[0m"
+	ubinize $(UBINIZEOPTS) --output $@ $<
+
+ubi: $(BOARD).ubi
+
 clean:
 	make -C at91bootstrap clean
 	make -C initramfs clean
+	rm -f $(BOARD).ubi
 
 mrproper: clean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
-	rm -f $(IMAGE) kernel *.dtb dtb
+	rm -f $(IMAGE) kernel *.dtb dtb persistant.ubifs *.ubi
+	rm -Rf persistant
