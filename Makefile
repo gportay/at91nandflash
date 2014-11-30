@@ -8,6 +8,9 @@ LINUXDIR	?= linux
 IMAGE		?= zImage
 DTB		?= $(BOARD)
 
+MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
+UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
+
 export CROSS_COMPILE
 
 at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
@@ -17,7 +20,7 @@ include $(BOARD).inc
 
 .PHONY: all clean mrproper
 
-all: bootstrap kernel dtb
+all: bootstrap ubi
 
 at91bootstrap/.config: at91bootstrap/board/$(board)/$(DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
@@ -53,11 +56,26 @@ kernel: $(IMAGE)
 dtb: $(DTB).dtb
 	ln -sf initramfs/$< $@
 
+persistant:
+	install -d $@
+
+persistant.ubifs: persistant
+	@echo -e "\e[1mGenerating persistant.ubifs...\e[0m"
+	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
+
+$(BOARD).ubi: ubi.ini kernel dtb persistant.ubifs
+	@echo -e "\e[1mGenerating $@...\e[0m"
+	ubinize $(UBINIZEOPTS) --output $@ $<
+
+ubi: $(BOARD).ubi
+
 clean:
 	make -C at91bootstrap clean
 	make -C initramfs clean
-	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb
+	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi
 
 mrproper: clean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
+	rm -f persistant.ubifs *.ubi
+	rm -Rf persistant
