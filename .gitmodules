@@ -1,3 +1,6 @@
 [submodule "at91bootstrap"]
 	path = at91bootstrap
 	url = https://github.com/linux4sam/at91bootstrap.git
+[submodule "initramfs"]
+	path = initramfs
+	url = https://github.com/gazoo74/initramfs.git
