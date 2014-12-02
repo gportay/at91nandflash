@@ -6,6 +6,7 @@ DEFCONFIG	?= $(board)nf_linux_zimage_dt_defconfig
 
 LINUXDIR	?= linux
 IMAGE		?= zImage
+DTB		?= $(BOARD)
 
 export CROSS_COMPILE
 
@@ -16,7 +17,7 @@ include $(BOARD).inc
 
 .PHONY: all clean mrproper
 
-all: bootstrap kernel
+all: bootstrap kernel dtb
 
 at91bootstrap/.config: at91bootstrap/board/$(board)/$(DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
@@ -44,10 +45,18 @@ $(IMAGE): initramfs.cpio
 kernel: $(IMAGE)
 	ln -sf initramfs/$< $@
 
+%.dtb:
+	@echo -e "\e[1mGenerating $@...\e[0m"
+	make -C initramfs $@
+	ln -sf initramfs/$@
+
+dtb: $(DTB).dtb
+	ln -sf initramfs/$< $@
+
 clean:
 	make -C at91bootstrap clean
 	make -C initramfs clean
-	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel
+	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb
 
 mrproper: clean
 	make -C at91bootstrap mrproper
