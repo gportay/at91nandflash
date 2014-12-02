@@ -4,6 +4,9 @@ BOARD		?= at91-sama5d3_xplained
 board		:= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e '/sama[0-9]/s,^at91-*,,')
 DEFCONFIG	?= $(board)nf_linux_zimage_dt_defconfig
 
+LINUXDIR	?= linux
+IMAGE		?= zImage
+
 export CROSS_COMPILE
 
 at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
@@ -13,7 +16,7 @@ include $(BOARD).inc
 
 .PHONY: all clean mrproper
 
-all: bootstrap
+all: bootstrap kernel
 
 at91bootstrap/.config: at91bootstrap/board/$(board)/$(DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
@@ -29,9 +32,23 @@ $(at91bootstrap_output).bin: at91bootstrap/binaries/at91bootstrap.bin
 
 bootstrap: $(at91bootstrap_output).bin
 
+initramfs.cpio:
+	make -C initramfs
+	ln -sf initramfs/$@
+
+$(IMAGE): initramfs.cpio
+	@echo -e "\e[1mGenerating $@...\e[0m"
+	make -C initramfs kernel LINUXDIR=$(LINUXDIR)
+	ln -sf initramfs/$@
+
+kernel: $(IMAGE)
+	ln -sf initramfs/$< $@
+
 clean:
 	make -C at91bootstrap clean
-	rm -f $(at91bootstrap_output).bin
+	make -C initramfs clean
+	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel
 
 mrproper: clean
 	make -C at91bootstrap mrproper
+	make -C initramfs mrproper
