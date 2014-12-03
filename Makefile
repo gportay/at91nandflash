@@ -1,5 +1,8 @@
 CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
+BOARDTYPE	?= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e 's,_.*$$,x-ek,')
+BOARDFAMILY	?= $(shell echo $(BOARD) | sed -e 's,_.*$$,,')
+BOARDSUFFIX	?= $(shell echo $(BOARD) | sed -e 's,^.*_,_,')
 
 board		:= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e '/sama[0-9]/s,^at91-*,,')
 DEFCONFIG	?= $(board)nf_linux_zimage_dt_defconfig
@@ -11,6 +14,8 @@ DTB		?= $(BOARD)
 MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
 UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
 
+DEVICE		?= /dev/ttyACM0
+
 export CROSS_COMPILE
 
 at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
@@ -18,7 +23,7 @@ at91bootstrap_output	?= $(shell echo $(DEFCONFIG) | sed -e 's,.*nf_,-nandflashbo
 
 include $(BOARD).inc
 
-.PHONY: all clean mrproper
+.PHONY: all clean mrproper sam-ba
 
 all: bootstrap ubi
 
@@ -33,8 +38,6 @@ at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 
 $(at91bootstrap_output).bin: at91bootstrap/binaries/at91bootstrap.bin
 	ln -sf at91bootstrap/binaries/$@
-
-bootstrap: $(at91bootstrap_output).bin
 
 initramfs.cpio:
 	make -C initramfs
@@ -67,15 +70,43 @@ $(BOARD).ubi: ubi.ini kernel dtb persistant.ubifs
 	@echo -e "\e[1mGenerating $@...\e[0m"
 	ubinize $(UBINIZEOPTS) --output $@ $<
 
-ubi: $(BOARD).ubi
+$(BOARD)-mtd0.bin: $(at91bootstrap_output).bin
+
+$(BOARD)-mtd1.bin: $(BOARD).ubi
+
+bootstrap: $(BOARD)-mtd0.bin
+
+ubi: $(BOARD)-mtd1.bin
+
+$(BOARD)-nandflash4sam-ba.tcl: board-nandflash4sam-ba.tcl.in
+	sed -e "s,@BOOTSTRAPFILE@,$(BOARD)-mtd0.bin," \
+	    -e "s,@UBIFILE@,$(BOARD)-mtd1.bin," \
+	    -e "s,@BOARDFAMILY@,$(BOARDFAMILY)," \
+	    -e "s,@BOARDSUFFIX@,$(BOARDSUFFIX)," \
+	    $< >$@
+
+sam-ba: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin
+	@echo -e "\e[1mFlashing $@ board $(BOARDTYPE) available at $(DEVICE) using script $< ...\e[0m"
+	$@ $(DEVICE) $(BOARDTYPE) $< || true
+
+$(BOARD)-sam-ba.sh:
+	echo "#!/bin/sh" >$@
+	echo "sam-ba \$${1:-$(DEVICE)} $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >>$@
+
+$(BOARD)-sam-ba.bat:
+	echo "sam-ba.exe \\usb\\ARM0 $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >$@
+
+
+%.bin:
+	ln -sf $< $@
 
 clean:
 	make -C at91bootstrap clean
 	make -C initramfs clean
-	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi
+	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 mrproper: clean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
-	rm -f persistant.ubifs *.ubi
+	rm -f persistant.ubifs *.ubi *-mtd*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat
 	rm -Rf persistant
