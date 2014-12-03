@@ -1,0 +1,10 @@
+## Files to load
+set bootstrapFile	"@BOOTSTRAPFILE@"
+set ubiFile		"@UBIFILE@"
+
+## board variant
+set boardFamily		"@BOARDFAMILY@"
+set board_suffix	"@BOARDSUFFIX@"
+
+## now call common script
+source nandflash4sam-ba.tcl
