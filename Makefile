@@ -100,6 +100,9 @@ $(BOARD)-sam-ba.bat:
 %.bin:
 	ln -sf $< $@
 
+tar: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
+	tar hcf $(BOARD).$@ $?
+
 clean:
 	make -C at91bootstrap clean
 	make -C initramfs clean
@@ -108,5 +111,5 @@ clean:
 mrproper: clean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
-	rm -f persistant.ubifs *.ubi *-mtd*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat
+	rm -f persistant.ubifs *.ubi *-mtd*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar
 	rm -Rf persistant
