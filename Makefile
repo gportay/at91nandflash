@@ -15,6 +15,7 @@ MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
 UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
 
 DEVICE		?= /dev/ttyACM0
+PREFIX		?= /opt/at91/nandflash
 
 export CROSS_COMPILE
 
@@ -108,6 +109,10 @@ tgz: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash
 
 zip: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 	zip -9 $(BOARD).$@ $?
+
+install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
+	install -d $(DESTDIR)$(PREFIX)/$(BOARD)
+	for file in $?; do install $$file $(DESTDIR)/$(PREFIX)/$(BOARD); done
 
 clean:
 	make -C at91bootstrap clean
