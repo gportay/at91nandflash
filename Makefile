@@ -17,6 +17,8 @@ UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
 DEVICE		?= /dev/ttyACM0
 PREFIX		?= /opt/at91/nandflash
 
+sam_ba_bin	?= $(shell uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')
+
 export CROSS_COMPILE
 
 at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
@@ -88,7 +90,7 @@ $(BOARD)-nandflash4sam-ba.tcl: board-nandflash4sam-ba.tcl.in
 
 sam-ba: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin
 	@echo -e "\e[1mFlashing $@ board $(BOARDTYPE) available at $(DEVICE) using script $< ...\e[0m"
-	$@ $(DEVICE) $(BOARDTYPE) $< || true
+	$(sam_ba_bin) $(DEVICE) $(BOARDTYPE) $< || true
 
 $(BOARD)-sam-ba.sh:
 	echo "#!/bin/sh" >$@
