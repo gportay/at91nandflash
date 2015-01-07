@@ -146,3 +146,26 @@ reallyclean:: clean
 mrproper:: reallyclean
 	make -C initramfs mrproper
 	rm -f kconfig.mk kconfig-frontends
+
+debug::
+	@echo ">>> $(SELFDIR).$@::"
+	@echo "  - MAKEFILE_LIST=$(MAKEFILE_LIST)"
+	@echo "  - SELFDIR=$(SELFDIR)"
+	@echo "  - CURDIR=$(CURDIR)"
+	@echo "  - CROSS_COMPILE=$(CROSS_COMPILE)"
+	@echo "  - BOARD=$(BOARD)"
+	@echo "  - BOARDTYPE=$(BOARDTYPE)"
+	@echo "  - BOARDFAMILY=$(BOARDFAMILY)"
+	@echo "  - BOARDSUFFIX=$(BOARDSUFFIX)"
+	@echo "  - board=$(board)"
+	@echo "  - DEFCONFIG=$(DEFCONFIG)"
+	@echo "  - KERN_DEFCONFIG=$(KERN_DEFCONFIG)"
+	@echo "  - LINUXDIR=$(LINUXDIR)"
+	@echo "  - IMAGE=$(IMAGE)"
+	@echo "  - DTB=$(DTB)"
+	@echo "  - MKFSUBIFSOPTS=$(MKFSUBIFSOPTS)"
+	@echo "  - UBINIZEOPTS=$(UBINIZEOPTS)"
+	@echo "  - DEVICE=$(DEVICE)"
+	@echo "  - PREFIX=$(PREFIX)"
+	@echo "  - sam_ba_bin=$(sam_ba_bin)"
+	@echo "<<< $(SELFDIR).$@!"
