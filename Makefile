@@ -30,6 +30,18 @@ export CROSS_COMPILE
 at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
 at91bootstrap_output	?= $(shell echo $(DEFCONFIG) | sed -e 's,.*nf_,-nandflashboot-,' -e 's,_defconfig,-$(at91bootstrap_version),' -e 's,_,-,g' -e 's,^,$(board)',)
 
+.PHONY::
+
+.PRECIOUS::
+
+all::
+
+include kconfig.mk
+
+kconfig.mk:
+	ln -sf initramfs/kconfig.mk
+	ln -sf initramfs/kconfig-frontends
+
 include $(BOARD).inc
 
 .PHONY:: all clean reallyclean mrproper sam-ba
@@ -137,3 +149,4 @@ reallyclean:: clean
 mrproper:: reallyclean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
+	rm -f kconfig.mk kconfig-frontends
