@@ -36,6 +36,21 @@ at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_
 
 export CROSS_COMPILE
 
+.PHONY::
+
+.PRECIOUS::
+
+.SECONDARY::
+
+.SILENT::
+
+all::
+
+include kconfig.mk
+
+kconfig.mk:
+	ln -sf initramfs/$@
+
 .PHONY:: all clean reallyclean mrproper sam-ba
 
 .SILENT:: check
@@ -175,3 +190,4 @@ reallyclean:: clean
 mrproper:: reallyclean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
+	rm -f kconfig.mk

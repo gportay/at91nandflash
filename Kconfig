@@ -1,0 +1,80 @@
+#
+# For a description of the syntax of this configuration file,
+# see ./share/doc/kconfig-frontends/kconfig-language.txt.
+#
+mainmenu "AT91 Nandflash Configuration"
+
+menu "InitRAMFS"
+
+config INITRAMFS_DEFCONFIG
+	string "InitRAMFS defconfig"
+	default ""
+	help
+
+endmenu
+
+menu "UBI"
+
+config UBI
+	bool "Enable UBI"
+	default y
+	help
+
+config UBI_SPARE
+	bool "Enable spare volumes"
+	depends on UBI
+	default n
+	help
+
+config MKFSUBIFSOPTS
+	string "mkubifs options"
+	depends on UBI
+	default "--leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048"
+	help
+
+config UBINIZEOPTS
+	string "ubinize options"
+	depends on UBI
+	default "--peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800"
+	help
+
+config DTB
+	bool "Enable Device-Tree Support"
+	default y
+	help
+
+config DTB_UBI_VOLNAME
+	string "Device-Tree Volume-name"
+	depends on DTB && UBI
+	default "dtb"
+
+config DTB_SPARE_UBI_VOLNAME
+	string "Device-Tree Spare Volume-name"
+	depends on DTB && UBI && UBI_SPARE
+	default "dtb-spare"
+
+config KERNEL_UBI_VOLNAME
+	string "Kernel Volume Name"
+	depends on UBI
+	default "kernel"
+	help
+
+config KERNEL_SPARE_UBI_VOLNAME
+	string "Kernel Spare Volume Name"
+	depends on UBI && UBI_SPARE
+	default "kernel-spare"
+	help
+
+config PERSISTANT_UBI_VOLNAME
+	string "Persitant Volume Name"
+	depends on UBI
+	default "persistant"
+	help
+
+config AUTORESIZEFLAG
+	bool "Auto-resize Flag"
+	depends on UBI
+	default y
+	help
+
+endmenu
