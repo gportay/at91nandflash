@@ -50,14 +50,7 @@ check::
 		&& ( echo "sam-ba: Mismatch board-type '$(BOARDTYPE)'!" >&2; exit 1 )
 	echo "checked!"
 
-include at91bootstrap.mk
-
-initramfs_%:
-	make -C initramfs $*
-
-initramfs.cpio:
-	make -C initramfs
-	ln -sf initramfs/$@
+include at91bootstrap.mk initramfs.mk
 
 $(IMAGE): initramfs.cpio
 	@echo "Generating $@..."
@@ -134,9 +127,7 @@ clean::
 	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
-	make -C initramfs clean
 	rm -f persistant.ubifs *.ubi *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
 	rm -Rf persistant
 
 mrproper:: reallyclean
-	make -C initramfs mrproper
