@@ -54,6 +54,9 @@ include at91bootstrap.mk
 
 all:: bootstrap ubi
 
+initramfs_%:
+	make -C initramfs $*
+
 initramfs.cpio:
 	make -C initramfs
 	ln -sf initramfs/$@
