@@ -50,6 +50,9 @@ at91bootstrap/binaries/$(at91board)-$(at91suffix).bin: at91bootstrap/binaries/at
 $(at91board)-$(at91suffix).bin: at91bootstrap/binaries/$(at91board)-$(at91suffix).bin
 	cp $< $@
 
+at91bootstrap_%:
+	make -C at91bootstrap $*
+
 initramfs.cpio:
 	make -C initramfs
 	ln -sf initramfs/$@
