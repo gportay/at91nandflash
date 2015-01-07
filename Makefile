@@ -72,6 +72,9 @@ check::
 
 include at91bootstrap.mk
 
+initramfs_%:
+	make -C initramfs $*
+
 initramfs.cpio:
 	make -C initramfs
 	ln -sf initramfs/$@
