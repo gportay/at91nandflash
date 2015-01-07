@@ -1,3 +1,9 @@
+VERSION		 = 0
+PATCHLEVEL	 = 0
+SUBLEVEL	 = 0
+EXTRAVERSION	 = .0
+NAME		 = Charlie Hebdo
+
 CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
 BOARDTYPE	?= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e 's,_.*$$,x-ek,')
