@@ -67,9 +67,8 @@ $(IMAGE): initramfs.cpio
 kernel: $(IMAGE)
 	ln -sf initramfs/$< $@
 
-%.dtb:
+%.dtb: initramfs_%
 	@echo -e "\e[1mGenerating $@...\e[0m"
-	make -C initramfs $@
 	ln -sf initramfs/$@
 
 dtb: $(DTB).dtb
