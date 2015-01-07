@@ -47,22 +47,9 @@ include $(BOARD).inc
 
 .PHONY:: all clean reallyclean mrproper sam-ba
 
+include at91bootstrap.mk
+
 all:: bootstrap ubi
-
-at91bootstrap_%:
-	make -C at91bootstrap $*
-
-at91bootstrap/.config: at91bootstrap/board/$(board)/$(AT91BOOTSTRAP_DEFCONFIG)
-	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
-	make -C at91bootstrap $(AT91BOOTSTRAP_DEFCONFIG)
-
-at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
-	@echo -e "\e[1mCompiling $@...\e[0m"
-	make -C at91bootstrap
-	touch $@
-
-$(at91bootstrap_output).bin: at91bootstrap/binaries/at91bootstrap.bin
-	ln -sf at91bootstrap/binaries/$@
 
 initramfs.cpio:
 	make -C initramfs
@@ -145,12 +132,10 @@ clean::
 	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
-	make -C at91bootstrap clean
 	make -C initramfs clean
 	rm -f persistant.ubifs *.ubi *-mtd*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
 	rm -Rf persistant
 
 mrproper:: reallyclean
-	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
 	rm -f kconfig.mk
