@@ -32,9 +32,9 @@ at91bootstrap_output	?= $(shell echo $(DEFCONFIG) | sed -e 's,.*nf_,-nandflashbo
 
 include $(BOARD).inc
 
-.PHONY: all clean mrproper sam-ba
+.PHONY:: all clean mrproper sam-ba
 
-all: bootstrap ubi
+all:: bootstrap ubi
 
 at91bootstrap/.config: at91bootstrap/board/$(board)/$(DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
@@ -125,12 +125,12 @@ install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandf
 	install -d $(DESTDIR)$(PREFIX)/$(BOARD)
 	for file in $?; do install $$file $(DESTDIR)/$(PREFIX)/$(BOARD); done
 
-clean:
+clean::
 	make -C at91bootstrap clean
 	make -C initramfs clean
 	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
-mrproper: clean
+mrproper:: clean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
 	rm -f persistant.ubifs *.ubi *-mtd*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
