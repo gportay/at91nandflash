@@ -50,12 +50,9 @@ include $(BOARD).inc
 
 .PHONY:: all clean reallyclean mrproper sam-ba
 
-include at91bootstrap.mk
+include at91bootstrap.mk initramfs.mk
 
 all:: bootstrap ubi
-
-initramfs_%:
-	make -C initramfs $*
 
 initramfs.cpio:
 	make -C initramfs
@@ -138,7 +135,6 @@ clean::
 	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
-	make -C initramfs clean
 	rm -f persistant.ubifs *.ubi *-mtd*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
 	rm -Rf persistant
 
