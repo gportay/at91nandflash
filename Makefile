@@ -49,6 +49,9 @@ include $(BOARD).inc
 
 all:: bootstrap ubi
 
+at91bootstrap_%:
+	make -C at91bootstrap $*
+
 at91bootstrap/.config: at91bootstrap/board/$(board)/$(AT91BOOTSTRAP_DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
 	make -C at91bootstrap $(AT91BOOTSTRAP_DEFCONFIG)
