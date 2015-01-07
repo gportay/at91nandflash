@@ -36,7 +36,7 @@ at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_
 
 export CROSS_COMPILE
 
-.PHONY:: all clean mrproper sam-ba
+.PHONY:: all clean reallyclean mrproper sam-ba
 
 .SILENT:: check
 
@@ -164,12 +164,14 @@ install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandf
 	for file in $?; do install $$file $(DESTDIR)/$(PREFIX)/$(BOARD); done
 
 clean::
-	make -C at91bootstrap clean
-	make -C initramfs clean
 	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
-mrproper:: clean
-	make -C at91bootstrap mrproper
-	make -C initramfs mrproper
+reallyclean:: clean
+	make -C at91bootstrap clean
+	make -C initramfs clean
 	rm -f persistant.ubifs *.ubi *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
 	rm -Rf persistant
+
+mrproper:: reallyclean
+	make -C at91bootstrap mrproper
+	make -C initramfs mrproper
