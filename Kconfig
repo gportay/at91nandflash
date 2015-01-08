@@ -151,3 +151,12 @@ config AUTORESIZEFLAG
 	help
 
 endmenu
+
+menu "SAM-BA"
+
+config SAM_BA
+	string "SAM-BA Binarie"
+	default "bin/sam-ba"
+	help
+
+endmenu
