@@ -42,7 +42,7 @@ at91bootstrap_output	?= $(shell echo $(AT91BOOTSTRAP_DEFCONFIG) | sed -e 's,.*nf
 
 all::
 
-include kconfig.mk
+-include kconfig.mk
 
 kconfig.mk:
 	ln -sf initramfs/$@
