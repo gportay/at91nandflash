@@ -4,7 +4,8 @@ SUBLEVEL	 = 0
 EXTRAVERSION	 = .0
 NAME		 = Charlie Hebdo
 
-CROSS_COMPILE	?= arm-linux-gnueabi-
+cross_compile	?= $(CONFIG_CROSS_COMPILE)
+CROSS_COMPILE	?= $(if $(cross_compile),$(cross_compile),arm-linux-gnueabi-)
 BOARD		?= at91-sama5d3_xplained
 BOARDTYPE	?= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e 's,_.*$$,x-ek,')
 BOARDFAMILY	?= $(shell echo $(BOARD) | sed -e 's,_.*$$,,')
