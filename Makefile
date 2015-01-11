@@ -101,6 +101,10 @@ persistant.ubifs: persistant
 	@echo -e "\e[1mGenerating persistant.ubifs...\e[0m"
 	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
 
+ubi.ini: at91bootstrap/.config $(KCONFIG_CONFIG)
+	@echo -e "\e[1mGenerating $@...\e[0m"
+	$(obj)/ubi.sh $(KCONFIG_CONFIG) >$@
+
 $(BOARD).ubi: ubi.ini kernel dtb persistant.ubifs
 	@echo -e "\e[1mGenerating $@...\e[0m"
 	ubinize $(UBINIZEOPTS) --output $@ $<
