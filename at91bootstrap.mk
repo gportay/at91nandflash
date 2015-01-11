@@ -1,4 +1,7 @@
-ubi_defconfig: ubi_defconfig.in
+at91bootstrap.cfg: $(KCONFIG_CONFIG)
+	$(obj)/at91bootstrap.sh $< >$@
+
+ubi_defconfig: ubi_defconfig.in $(KCONFIG_CONFIG)
 	sed -e "s#@CMDLINE@#$(CMDLINE)#" \
 	    -e "s#@KERNEL_VOLNAME@#$(KERNEL_VOLNAME)#" \
 	    -e "s#@KERNEL_SPARE_VOLNAME@#$(KERNEL_SPARE_VOLNAME)#" \
