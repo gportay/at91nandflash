@@ -37,6 +37,8 @@ at91suffix	?= $(shell echo $(AT91DEFCONFIG) | sed -e 's,nf_,nandflashboot-,' -e 
 
 export CROSS_COMPILE
 
+### JUST FOR FUN
+
 .PHONY::
 
 .PRECIOUS::
