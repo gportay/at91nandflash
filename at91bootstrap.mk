@@ -19,7 +19,4 @@ $(at91bootstrap_output).bin: at91bootstrap/binaries/at91bootstrap.bin
 	ln -sf at91bootstrap/binaries/$@
 
 reallyclean::
-	make -C at91bootstrap clean
-
-mrproper::
 	make -C at91bootstrap mrproper
