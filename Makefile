@@ -30,7 +30,7 @@ sam_ba_bin	?= $(shell uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')
 export CROSS_COMPILE
 
 at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
-at91bootstrap_output	?= $(shell echo $(AT91BOOTSTRAP_DEFCONFIG) | sed -e 's,.*nf_,-nandflashboot-,' -e 's,_defconfig,-$(at91bootstrap_version),' -e 's,_,-,g' -e 's,^,$(board)',)
+at91bootstrap_output	?= $(shell echo $(AT91BOOTSTRAP_DEFCONFIG) | sed -e 's,.*nf_,-nandflashboot-,' -e 's,dt_defconfig,dt_ubi_defconfig,' -e 's,_defconfig,-$(at91bootstrap_version),' -e 's,_,-,g' -e 's,^,$(board)',)
 
 .PHONY::
 
