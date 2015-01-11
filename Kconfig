@@ -38,6 +38,17 @@ config LINUXDIR
 	default "linux"
 	help
 
+config LINUX_CMDLINE
+	string "Linux Command-Line"
+	default "console=ttyS0,115200 mtdparts=atmel_nand:128k(bootstrap)ro,-(UBI) earlyprintk root=/dev/ram0 rootfstype=ramfs ubi.mtd=ubi"
+	help
+
+config LINUX_APPEND_CMDLINE
+	bool "Append the linux command-line"
+	default n
+	help
+	  Append to the linux command-line
+
 config LINUX_DEFCONFIG
 	string "Linux defconfig"
 	default "at91_dt_defconfig"
