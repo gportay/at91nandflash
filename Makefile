@@ -27,8 +27,10 @@ DTB		?= $(shell echo $(BOARD) | sed -e '/at91-sam9/s,at91-,at91,' -e '/at91-sama
 kdefconfig	:= $(CONFIG_KDEFCONFIG)
 KDEFCONFIG	?= $(if $(kdefconfig),$(kdefconfig),at91_dt_defconfig)
 
-MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
-UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
+opts		:= $(CONFIG_MKFSUBIFSOPTS)
+MKFSUBIFSOPTS	?= $(if $(opts),$(shell echo $(opts)),--leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048)
+opts		:= $(CONFIG_UBINIZEOPTS)
+UBINIZEOPTS	?= $(if $(opts),$(shell echo $(opts)),--peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800)
 
 DEVICE		?= /dev/ttyACM0
 PREFIX		?= /opt/at91/nandflash
