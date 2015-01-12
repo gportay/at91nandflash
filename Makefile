@@ -18,6 +18,8 @@ AT91BOOTSTRAP_DEFCONFIG	?= $(if $(defconfig),$(defconfig),$(board)nf_linux_zimag
 LINUXDIR	?= linux
 IMAGE		?= zImage
 DTB		?= $(BOARD)
+defconfig	:= $(CONFIG_LINUX_DEFCONFIG)
+LINUX_DEFCONFIG	?= $(if $(defconfig),$(defconfig),at91_dt_defconfig)
 
 MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
 UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
@@ -58,7 +60,7 @@ initramfs.cpio:
 
 $(IMAGE): initramfs.cpio
 	@echo -e "\e[1mGenerating $@...\e[0m"
-	make -C initramfs kernel LINUXDIR=$(LINUXDIR)
+	make -C initramfs kernel LINUXDIR=$(LINUXDIR) LINUX_DEFCONFIG=$(LINUX_DEFCONFIG)
 	ln -sf initramfs/$@
 
 kernel: $(IMAGE)

@@ -38,6 +38,11 @@ config LINUXDIR
 	default "linux"
 	help
 
+config LINUX_DEFCONFIG
+	string "Linux defconfig"
+	default "at91_dt_defconfig"
+	help
+
 endmenu
 
 menu "UBI"
