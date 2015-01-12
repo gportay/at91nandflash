@@ -11,8 +11,8 @@ BOARDTYPE	?= $(shell echo $(board) | sed -e 's,^at91-,at91,' -e '/m10g45/s,m10g4
 BOARDTYPES	:= at91sam9260-ek at91sam9261-ek at91sam9263-ek at91sam9g10-ek at91sam9g20-ek at91sam9g45-ekes at91sam9m10-ekes at91sam9m10-g45-ek at91sam9n12-ek at91sam9rl64-ek at91sam9g15-ek at91sam9g25-ek at91sam9g35-ek at91sam9x25-ek at91sam9x35-ek at91sama5d3x-xplained at91sama5d3x-ek at91sama5d4x-ek
 
 at91board	:= $(shell echo $(board) | sed -e '/sam9[gx][123]5/s,[gx][123]5,x5,' -e '/sam9/s,^at91-,at91,' -e '/sama5/s,^at91-*,,')
-defconfig	:= nf_linux_image_dt_defconfig
-DEFCONFIG	?= $(at91board)$(defconfig)
+at91defconfig	:= $(CONFIG_AT91DEFCONFIG)
+AT91DEFCONFIG	?= $(if $(at91defconfig),$(at91defconfig),$(at91board)nf_linux_image_dt_defconfig)
 
 CMDLINE			?= console=ttyS0,115200 mtdparts=atmel_nand:128k(bootstrap)ro,-(UBI) ubi.mtd=UBI
 KERNEL_VOLNAME		?= kernel
@@ -32,7 +32,7 @@ PREFIX		?= /opt/at91/nandflash
 
 sam_ba_bin	?= $(shell uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')
 at91version	?= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSION/s,[^0-9.]*,,p" at91bootstrap/Makefile; fi)
-at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91version),' -e 's,_,-,g')
+at91suffix	?= $(shell echo $(AT91DEFCONFIG) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91version),' -e 's,_,-,g')
 
 export CROSS_COMPILE
 
@@ -78,14 +78,14 @@ at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_defconfig: at91boo
 at91bootstrap/board/$(at91board)/%_defconfig:
 	ln -sf $(<F) $@
 
-at91bootstrap/board/$(at91board)/$(DEFCONFIG): at91bootstrap/board/$(at91board)/$(at91board)nf_uboot_defconfig
+at91bootstrap/board/$(at91board)/$(AT91DEFCONFIG): at91bootstrap/board/$(at91board)/$(at91board)nf_uboot_defconfig
 	sed -e '/CONFIG_LOAD_UBOOT/d' \
 	    -e '$$aCONFIG_LOAD_LINUX=y' \
 	    $< >$@
 
-at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG) ubi_defconfig
+at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(AT91DEFCONFIG) ubi_defconfig
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
-	make -C at91bootstrap $(DEFCONFIG)
+	make -C at91bootstrap $(AT91DEFCONFIG)
 	cd at91bootstrap && config/merge_config.sh $(@F) ../ubi_defconfig
 	if ! grep -qE "CONFIG_UBI=y" $@; then echo "at91bootstrap: Mismatch configuration!" >&2; rm $@; exit 1; fi
 
