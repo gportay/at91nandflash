@@ -24,6 +24,8 @@ DTB_SPARE_VOLNAME	?= $(DTB_VOLNAME)-spare
 LINUXDIR	?= linux
 IMAGE		?= zImage
 DTB		?= $(shell echo $(BOARD) | sed -e '/at91-sam9/s,at91-,at91,' -e '/at91-sama5d3[1-6]ek/s,at91-,,')
+kdefconfig	:= $(CONFIG_KDEFCONFIG)
+KDEFCONFIG	?= $(if $(kdefconfig),$(kdefconfig),at91_dt_defconfig)
 
 MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
 UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
@@ -76,7 +78,7 @@ initramfs.cpio:
 
 $(IMAGE): initramfs.cpio
 	@echo -e "\e[1mGenerating $@...\e[0m"
-	make -C initramfs kernel LINUXDIR=$(LINUXDIR)
+	make -C initramfs kernel LINUXDIR=$(LINUXDIR) LINUX_DEFCONFIG=$(KDEFCONFIG)
 	ln -sf initramfs/$@
 
 kernel: $(IMAGE)
