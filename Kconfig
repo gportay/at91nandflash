@@ -4,6 +4,15 @@
 #
 mainmenu "AT91 Nandflash Configuration"
 
+menu "AT91Bootstrap"
+
+config AT91BOOTSTRAP_DEFCONFIG
+	string "AT91 Bootstrap defconfig"
+	default ""
+	help
+
+endmenu
+
 menu "InitRAMFS"
 
 config INITRAMFS_DEFCONFIG
