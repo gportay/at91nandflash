@@ -29,6 +29,11 @@ config INITRAMFS_DEFCONFIG
 	default ""
 	help
 
+config OVERLAY
+	bool "Overlay FS"
+	default n
+	help
+
 endmenu
 
 menu "Linux"

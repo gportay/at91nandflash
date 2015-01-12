@@ -5,7 +5,7 @@ EXTRAVERSION	 = .0
 NAME		 = Charlie Hebdo
 
 cross_compile	?= $(CONFIG_CROSS_COMPILE)
-CROSS_COMPILE	?= $(if $(cross_compile),$(cross_compile),arm-linux-gnueabi-)
+CROSS_COMPILE	?= $(if $(cross_compile),$(cross_compile),arm-atmel-linux-musleabi-)
 BOARD		?= at91-sama5d3_xplained
 BOARDTYPE	?= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e 's,_.*$$,x-ek,')
 BOARDFAMILY	?= $(shell echo $(BOARD) | sed -e 's,_.*$$,,')
@@ -67,7 +67,7 @@ $(IMAGE): initramfs.cpio
 kernel: $(IMAGE)
 	ln -sf initramfs/$< $@
 
-%.dtb: initramfs_%
+%.dtb: initramfs_%.dtb
 	@echo -e "\e[1mGenerating $@...\e[0m"
 	ln -sf initramfs/$@
 
@@ -117,7 +117,6 @@ $(BOARD)-sam-ba.sh:
 $(BOARD)-sam-ba.bat:
 	echo "sam-ba.exe \\usb\\ARM0 $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >$@
 	chmod a+x $@
-
 
 %.bin:
 	ln -sf $< $@

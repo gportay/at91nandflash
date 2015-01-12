@@ -13,7 +13,6 @@ at91bootstrap/.config: at91bootstrap.cfg at91bootstrap/board/$(board)/$(AT91BOOT
 at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 	@echo -e "\e[1mCompiling $@...\e[0m"
 	make -C at91bootstrap
-	touch $@
 
 $(at91bootstrap_output).bin: at91bootstrap/binaries/at91bootstrap.bin
 	ln -sf at91bootstrap/binaries/$@
