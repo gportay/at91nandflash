@@ -53,6 +53,37 @@ config LINUX_DEFCONFIG
 	default "at91_dt_defconfig"
 	help
 
+choice
+	prompt "Linux Image"
+	default LINUX_ZIMAGE
+
+config LINUX_IMAGE
+	bool "Image - Uncompressed kernel image"
+	help
+	  Uncompressed kernel image
+
+config LINUX_ZIMAGE
+	bool "zImage - Compressed kernel image"
+	help
+	  Compressed kernel image
+
+config LINUX_UIMAGE
+	bool "uImage - U-Boot wrapped zImage"
+	help
+	  U-Boot wrapped zImage
+
+config LINUX_XIPIMAGE
+	bool "xipImage - XIP kernel image"
+	help
+	  XIP kernel image
+
+config LINUX_DEFCONFIG
+	string "Linux defconfig"
+	default "at91_dt_defconfig"
+	help
+
+endchoice
+
 endmenu
 
 menu "UBI"
