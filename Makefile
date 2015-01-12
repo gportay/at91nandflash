@@ -95,9 +95,11 @@ sam-ba: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin
 $(BOARD)-sam-ba.sh:
 	echo "#!/bin/sh" >$@
 	echo "sam-ba \$${1:-$(DEVICE)} $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >>$@
+	chmod a+x $@
 
 $(BOARD)-sam-ba.bat:
 	echo "sam-ba.exe \\usb\\ARM0 $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >$@
+	chmod a+x $@
 
 
 %.bin:
