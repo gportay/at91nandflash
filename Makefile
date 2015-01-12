@@ -94,7 +94,8 @@ sam-ba: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin
 
 $(BOARD)-sam-ba.sh:
 	echo "#!/bin/sh" >$@
-	echo "sam-ba \$${1:-$(DEVICE)} $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >>$@
+	echo "sam_ba_bin=$(uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')" >>$@
+	echo "$$sam_ba_bin \$${1:-$(DEVICE)} $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >>$@
 	chmod a+x $@
 
 $(BOARD)-sam-ba.bat:
