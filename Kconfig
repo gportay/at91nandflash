@@ -31,6 +31,15 @@ config INITRAMFS_DEFCONFIG
 
 endmenu
 
+menu "Linux"
+
+config LINUXDIR
+	string "Linux directory"
+	default "linux"
+	help
+
+endmenu
+
 menu "UBI"
 
 config UBI
