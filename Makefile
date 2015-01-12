@@ -11,7 +11,8 @@ BOARDFAMILY	?= $(shell echo $(BOARD) | sed -e 's,_.*$$,,')
 BOARDSUFFIX	?= $(shell echo $(BOARD) | sed -e 's,^.*_,_,')
 
 board		:= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e '/sama[0-9]/s,^at91-*,,')
-DEFCONFIG	?= $(board)nf_linux_zimage_dt_defconfig
+defconfig	:= $(CONFIG_AT91BOOTSTRAP_DEFCONFIG)
+AT91BOOTSTRAP_DEFCONFIG	?= $(if $(defconfig),$(defconfig),$(board)nf_linux_zimage_dt_defconfig)
 
 LINUXDIR	?= linux
 IMAGE		?= zImage
@@ -28,7 +29,7 @@ sam_ba_bin	?= $(shell uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')
 export CROSS_COMPILE
 
 at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
-at91bootstrap_output	?= $(shell echo $(DEFCONFIG) | sed -e 's,.*nf_,-nandflashboot-,' -e 's,_defconfig,-$(at91bootstrap_version),' -e 's,_,-,g' -e 's,^,$(board)',)
+at91bootstrap_output	?= $(shell echo $(AT91BOOTSTRAP_DEFCONFIG) | sed -e 's,.*nf_,-nandflashboot-,' -e 's,_defconfig,-$(at91bootstrap_version),' -e 's,_,-,g' -e 's,^,$(board)',)
 
 .PHONY::
 
@@ -48,9 +49,9 @@ include $(BOARD).inc
 
 all:: bootstrap ubi
 
-at91bootstrap/.config: at91bootstrap/board/$(board)/$(DEFCONFIG)
+at91bootstrap/.config: at91bootstrap/board/$(board)/$(AT91BOOTSTRAP_DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
-	make -C at91bootstrap $(DEFCONFIG)
+	make -C at91bootstrap $(AT91BOOTSTRAP_DEFCONFIG)
 
 at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 	@echo -e "\e[1mCompiling $@...\e[0m"
