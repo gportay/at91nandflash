@@ -44,7 +44,7 @@ at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 	touch $@
 
 $(at91bootstrap_output).bin: at91bootstrap/binaries/at91bootstrap.bin
-	ln -sf at91bootstrap/binaries/$@
+	cp at91bootstrap/binaries/$(@F) .
 
 initramfs.cpio:
 	make -C initramfs
