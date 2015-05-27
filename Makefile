@@ -8,8 +8,8 @@ CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
 BOARDTYPE	?= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e 's,_.*$$,x-ek,')
 
-board		:= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e '/sama[0-9]/s,^at91-*,,')
-DEFCONFIG	?= $(board)nf_linux_zimage_dt_defconfig
+at91board	:= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e '/sama[0-9]/s,^at91-*,,')
+DEFCONFIG	?= $(at91board)nf_linux_zimage_dt_defconfig
 
 LINUXDIR	?= linux
 IMAGE		?= zImage
@@ -22,11 +22,10 @@ DEVICE		?= /dev/ttyACM0
 PREFIX		?= /opt/at91/nandflash
 
 sam_ba_bin	?= $(shell uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')
+at91version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
+at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-$(at91version),' -e 's,_,-,g')
 
 export CROSS_COMPILE
-
-at91bootstrap_version	?= $(shell if test -e at91bootstrap/.git; then cd at91bootstrap && git describe | sed -e 's,-[0-9]\+-[0-9a-z]\+,,' -e 's,^v,,'; fi)
-at91bootstrap_output	?= $(shell echo $(DEFCONFIG) | sed -e 's,.*nf_,-nandflashboot-,' -e 's,_defconfig,-$(at91bootstrap_version),' -e 's,_,-,g' -e 's,^,$(board)',)
 
 include $(BOARD).inc
 
@@ -34,7 +33,7 @@ include $(BOARD).inc
 
 all: bootstrap ubi
 
-at91bootstrap/.config: at91bootstrap/board/$(board)/$(DEFCONFIG)
+at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
 	make -C at91bootstrap $(DEFCONFIG)
 
@@ -43,7 +42,7 @@ at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 	make -C at91bootstrap
 	touch $@
 
-$(at91bootstrap_output).bin: at91bootstrap/binaries/at91bootstrap.bin
+$(at91board)-$(at91suffix).bin: at91bootstrap/binaries/at91bootstrap.bin
 	cp at91bootstrap/binaries/$(@F) .
 
 initramfs.cpio:
@@ -77,7 +76,7 @@ $(BOARD).ubi: ubi.ini kernel dtb persistant.ubifs
 	@echo -e "\e[1mGenerating $@...\e[0m"
 	ubinize $(UBINIZEOPTS) --output $@ $<
 
-$(BOARD)-mtd0.bin: $(at91bootstrap_output).bin
+$(BOARD)-mtd0.bin: $(at91board)-$(at91suffix).bin
 
 $(BOARD)-mtd1.bin: $(BOARD).ubi
 
@@ -124,7 +123,7 @@ install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandf
 clean:
 	make -C at91bootstrap clean
 	make -C initramfs clean
-	rm -f $(at91bootstrap_output).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
+	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 mrproper: clean
 	make -C at91bootstrap mrproper
