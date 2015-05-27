@@ -6,14 +6,15 @@ NAME		 = Charlie Hebdo
 
 CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
-BOARDTYPE	?= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e 's,_.*$$,x-ek,')
+board		:= $(shell echo $(BOARD) | sed -e '/sama5d/s,d3[13456],d3x,')
+BOARDTYPE	?= $(shell echo $(board) | sed -e 's,^at91-,at91,' -e 's,ek$$,-ek,' -e 's,_xplained.*$$,x-ek,' -e '/sama5.*[^x]-ek/s,-ek,x-ek,')
 
-at91board	:= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e '/sama[0-9]/s,^at91-*,,')
+at91board	:= $(shell echo $(board) | sed -e 's,^at91-,at91,' -e '/sama5/s,^at91-*,,')
 DEFCONFIG	?= $(at91board)nf_linux_zimage_dt_defconfig
 
 LINUXDIR	?= linux
 IMAGE		?= zImage
-DTB		?= $(BOARD)
+DTB		?= $(shell echo $(BOARD) | sed -e '/at91-sama5d3[1-6]ek/s,at91-,,')
 
 MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
 UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
@@ -26,8 +27,6 @@ at91version	?= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSIO
 at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-$(at91version),' -e 's,_,-,g')
 
 export CROSS_COMPILE
-
-include $(BOARD).inc
 
 .PHONY: all clean mrproper sam-ba
 
