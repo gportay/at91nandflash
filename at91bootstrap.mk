@@ -20,13 +20,13 @@ at91bootstrap/board/$(at91board)/$(AT91DEFCONFIG): at91bootstrap/board/$(at91boa
 	    $< >$@
 
 at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(AT91DEFCONFIG) ubi_defconfig
-	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
+	@echo "Configuring at91bootstrap using $<..."
 	make -C at91bootstrap $(AT91DEFCONFIG)
 	cd at91bootstrap && config/merge_config.sh $(@F) ../ubi_defconfig
 	if ! grep -qE "CONFIG_UBI=y" $@; then echo "at91bootstrap: Mismatch configuration!" >&2; rm $@; exit 1; fi
 
 at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
-	@echo -e "\e[1mCompiling at91bootstrap...\e[0m"
+	@echo "Compiling at91bootstrap..."
 	make -C at91bootstrap
 	rm $@
 
