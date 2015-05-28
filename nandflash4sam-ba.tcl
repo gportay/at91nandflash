@@ -1,4 +1,8 @@
-# Copyright (c) 2014 Gaël PORTAY <gael.portay@gmail.com>
+# ----------------------------------------------------------------------------
+#         ATMEL Microcontroller
+# ----------------------------------------------------------------------------
+# Copyright (c) 2014-2015, Gaël PORTAY <gael.portay@gmail.com>
+#                    2014, Atmel Corporation
 #
 # All rights reserved.
 #
