@@ -8,6 +8,7 @@ CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
 board		:= $(shell echo $(BOARD) | sed -e '/sama5d/s,d3[13456],d3x,')
 BOARDTYPE	?= $(shell echo $(board) | sed -e 's,^at91-,at91,' -e '/m10g45/s,m10g45,m10-g45,' -e '/sam9rl/s,rl,rl64,' -e 's,ek$$,-ek,' -e 's,_xplained.*$$,x-ek,' -e '/sama5.*[^x]-ek/s,-ek,x-ek,')
+BOARDTYPES	:= at91sam9260-ek at91sam9261-ek at91sam9263-ek at91sam9g10-ek at91sam9g20-ek at91sam9g45-ekes at91sam9m10-ekes at91sam9m10-g45-ek at91sam9n12-ek at91sam9rl64-ek at91sam9g15-ek at91sam9g25-ek at91sam9g35-ek at91sam9x25-ek at91sam9x35-ek at91sama5d3x-xplained at91sama5d3x-ek at91sama5d4x-ek
 
 at91board	:= $(shell echo $(board) | sed -e '/sam9[gx][123]5/s,[gx][123]5,x5,' -e '/sam9/s,^at91-,at91,' -e '/sama5/s,^at91-*,,')
 defconfig	:= nf_linux_image_dt_defconfig
@@ -37,9 +38,17 @@ export CROSS_COMPILE
 
 .PHONY: all clean mrproper sam-ba
 
+.SILENT: check
+
 .SECONDARY: at91bootstrap/binaries/at91bootstrap.bin at91bootstrap/.config
 
 all: bootstrap ubi
+
+check:
+	echo -n "$(BOARD): "
+	for board in $(BOARDTYPES); do if test "$$board" = "$(BOARDTYPE)"; then exit 0; fi; done \
+		&& ( echo "sam-ba: Mismatch board-type '$(BOARDTYPE)'!" >&2; exit 1 )
+	echo "checked!"
 
 ubi_defconfig: ubi_defconfig.in
 	sed -e "s#@CMDLINE@#$(CMDLINE)#" \
