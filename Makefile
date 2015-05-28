@@ -35,6 +35,11 @@ include $(BOARD).inc
 
 all: bootstrap ubi
 
+at91bootstrap/board/$(at91board)/$(DEFCONFIG): at91bootstrap/board/$(at91board)/$(at91board)nf_uboot_defconfig
+	sed -e '/CONFIG_LOAD_UBOOT/d' \
+	    -e '$$aCONFIG_LOAD_LINUX=y' \
+	    $< >$@
+
 at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG)
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
 	make -C at91bootstrap $(DEFCONFIG)
