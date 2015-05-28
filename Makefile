@@ -10,7 +10,14 @@ board		:= $(shell echo $(BOARD) | sed -e '/sama5d/s,d3[13456],d3x,')
 BOARDTYPE	?= $(shell echo $(board) | sed -e 's,^at91-,at91,' -e '/m10g45/s,m10g45,m10-g45,' -e '/sam9rl/s,rl,rl64,' -e 's,ek$$,-ek,' -e 's,_xplained.*$$,x-ek,' -e '/sama5.*[^x]-ek/s,-ek,x-ek,')
 
 at91board	:= $(shell echo $(board) | sed -e '/sam9[gx][123]5/s,[gx][123]5,x5,' -e '/sam9/s,^at91-,at91,' -e '/sama5/s,^at91-*,,')
-DEFCONFIG	?= $(at91board)nf_linux_zimage_dt_defconfig
+defconfig	:= nf_linux_image_dt_defconfig
+DEFCONFIG	?= $(at91board)$(defconfig)
+
+CMDLINE			?= console=ttyS0,115200 mtdparts=atmel_nand:128k(bootstrap)ro,-(UBI) ubi.mtd=UBI
+KERNEL_VOLNAME		?= kernel
+KERNEL_SPARE_VOLNAME	?= $(KERNEL_VOLNAME)-spare
+DTB_VOLNAME		?= dtb
+DTB_SPARE_VOLNAME	?= $(DTB_VOLNAME)-spare
 
 LINUXDIR	?= linux
 IMAGE		?= zImage
@@ -24,7 +31,7 @@ PREFIX		?= /opt/at91/nandflash
 
 sam_ba_bin	?= $(shell uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')
 at91version	?= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSION/s,[^0-9.]*,,p" at91bootstrap/Makefile; fi)
-at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-$(at91version),' -e 's,_,-,g')
+at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91version),' -e 's,_,-,g')
 
 export CROSS_COMPILE
 
@@ -33,6 +40,14 @@ export CROSS_COMPILE
 .SECONDARY: at91bootstrap/binaries/at91bootstrap.bin at91bootstrap/.config
 
 all: bootstrap ubi
+
+ubi_defconfig: ubi_defconfig.in
+	sed -e "s#@CMDLINE@#$(CMDLINE)#" \
+	    -e "s#@KERNEL_VOLNAME@#$(KERNEL_VOLNAME)#" \
+	    -e "s#@KERNEL_SPARE_VOLNAME@#$(KERNEL_SPARE_VOLNAME)#" \
+	    -e "s#@DTB_VOLNAME@#$(DTB_VOLNAME)#" \
+	    -e "s#@DTB_SPARE_VOLNAME@#$(DTB_SPARE_VOLNAME)#" \
+	    $< >$@
 
 at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_defconfig: at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig
 
@@ -44,9 +59,11 @@ at91bootstrap/board/$(at91board)/$(DEFCONFIG): at91bootstrap/board/$(at91board)/
 	    -e '$$aCONFIG_LOAD_LINUX=y' \
 	    $< >$@
 
-at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG)
+at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG) ubi_defconfig
 	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
 	make -C at91bootstrap $(DEFCONFIG)
+	cd at91bootstrap && config/merge_config.sh $(@F) ../ubi_defconfig
+	if ! grep -qE "CONFIG_UBI=y" $@; then echo "at91bootstrap: Mismatch configuration!" >&2; rm $@; exit 1; fi
 
 at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 	@echo -e "\e[1mCompiling at91bootstrap...\e[0m"
@@ -145,5 +162,5 @@ clean:
 mrproper: clean
 	make -C at91bootstrap mrproper
 	make -C initramfs mrproper
-	rm -f persistant.ubifs *.ubi *-mtd*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
+	rm -f persistant.ubifs *.ubi *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
 	rm -Rf persistant
