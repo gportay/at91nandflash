@@ -10,6 +10,11 @@ run() {
 		echo "[blacklisted] $board: It's too big to fit into SRAM area. the support maxium size is 4096" >&2
 		return 0
 		;;
+	# Not yet suppported
+	at91-sam9g20ek_2mmc|at91-sama5d3x_cmp)
+		echo "[blacklisted] $board: Not yet supported!" >&2
+		return 0
+		;;
 	*)
 		make BOARD=$board $*
 		;;
