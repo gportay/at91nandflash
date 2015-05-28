@@ -69,13 +69,13 @@ at91bootstrap/board/$(at91board)/$(DEFCONFIG): at91bootstrap/board/$(at91board)/
 	    $< >$@
 
 at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG) ubi_defconfig
-	@echo -e "\e[1mConfiguring at91bootstrap using $<...\e[0m"
+	@echo "Configuring at91bootstrap using $<..."
 	make -C at91bootstrap $(DEFCONFIG)
 	cd at91bootstrap && config/merge_config.sh $(@F) ../ubi_defconfig
 	if ! grep -qE "CONFIG_UBI=y" $@; then echo "at91bootstrap: Mismatch configuration!" >&2; rm $@; exit 1; fi
 
 at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
-	@echo -e "\e[1mCompiling at91bootstrap...\e[0m"
+	@echo "Compiling at91bootstrap..."
 	make -C at91bootstrap
 	rm $@
 
@@ -93,7 +93,7 @@ initramfs.cpio:
 	ln -sf initramfs/$@
 
 $(IMAGE): initramfs.cpio
-	@echo -e "\e[1mGenerating $@...\e[0m"
+	@echo "Generating $@..."
 	make -C initramfs kernel LINUXDIR=$(LINUXDIR)
 	ln -sf initramfs/$@
 
@@ -101,7 +101,7 @@ kernel: $(IMAGE)
 	ln -sf initramfs/$< $@
 
 %.dtb:
-	@echo -e "\e[1mGenerating $@...\e[0m"
+	@echo "Generating $@..."
 	make -C initramfs $@
 	ln -sf initramfs/$@
 
@@ -112,11 +112,11 @@ persistant:
 	install -d $@
 
 persistant.ubifs: persistant
-	@echo -e "\e[1mGenerating persistant.ubifs...\e[0m"
+	@echo "Generating persistant.ubifs..."
 	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
 
 $(BOARD).ubi: ubi.ini kernel dtb persistant.ubifs
-	@echo -e "\e[1mGenerating $@...\e[0m"
+	@echo "Generating $@..."
 	ubinize $(UBINIZEOPTS) --output $@ $<
 
 $(BOARD)-mtd0.bin: $(at91board)-$(at91suffix).bin
@@ -133,7 +133,7 @@ $(BOARD)-nandflash4sam-ba.tcl: board-nandflash4sam-ba.tcl.in
 	    $< >$@
 
 sam-ba: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin
-	@echo -e "\e[1mFlashing $@ board $(BOARDTYPE) available at $(DEVICE) using script $< ...\e[0m"
+	@echo "Flashing $@ board $(BOARDTYPE) available at $(DEVICE) using script $< ..."
 	$(sam_ba_bin) $(DEVICE) $(BOARDTYPE) $< || true
 
 $(BOARD)-sam-ba.sh:
