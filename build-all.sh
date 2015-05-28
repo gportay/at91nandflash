@@ -5,6 +5,11 @@ run() {
 	shift
 
 	case $board in
+	# It's too big to fit into SRAM area. the support maxium size is 4096
+	at91-sam9260ek)
+		echo "[blacklisted] $board: It's too big to fit into SRAM area. the support maxium size is 4096" >&2
+		return 0
+		;;
 	*)
 		make BOARD=$board $*
 		;;
