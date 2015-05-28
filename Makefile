@@ -35,6 +35,11 @@ include $(BOARD).inc
 
 all: bootstrap ubi
 
+at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_defconfig: at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig
+
+at91bootstrap/board/$(at91board)/%_defconfig:
+	ln -sf $(<F) $@
+
 at91bootstrap/board/$(at91board)/$(DEFCONFIG): at91bootstrap/board/$(at91board)/$(at91board)nf_uboot_defconfig
 	sed -e '/CONFIG_LOAD_UBOOT/d' \
 	    -e '$$aCONFIG_LOAD_LINUX=y' \
