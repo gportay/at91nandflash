@@ -2,8 +2,5 @@
 set bootstrapFile	"@BOOTSTRAPFILE@"
 set ubiFile		"@UBIFILE@"
 
-## board variant
-set boardFamily		"@BOARDFAMILY@"
-
 ## now call common script
 source nandflash4sam-ba.tcl

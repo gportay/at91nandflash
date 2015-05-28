@@ -29,12 +29,6 @@
 
 ################################################################################
 
-# check for proper variable initialization
-if {! [info exists boardFamily]} {
-   puts "-E- === Board family not defined ==="
-   exit
-}
-
 ## Now check for the needed files
 if {! [file exists $bootstrapFile]} {
    puts "-E- === AT91Bootstrap file not found ==="

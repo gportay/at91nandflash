@@ -7,7 +7,6 @@ NAME		 = Charlie Hebdo
 CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
 BOARDTYPE	?= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e 's,_.*$$,x-ek,')
-BOARDFAMILY	?= $(shell echo $(BOARD) | sed -e 's,_.*$$,,')
 
 board		:= $(shell echo $(BOARD) | sed -e 's,^at91-,at91,' -e '/sama[0-9]/s,^at91-*,,')
 DEFCONFIG	?= $(board)nf_linux_zimage_dt_defconfig
@@ -89,7 +88,6 @@ ubi: $(BOARD)-mtd1.bin
 $(BOARD)-nandflash4sam-ba.tcl: board-nandflash4sam-ba.tcl.in
 	sed -e "s,@BOOTSTRAPFILE@,$(BOARD)-mtd0.bin," \
 	    -e "s,@UBIFILE@,$(BOARD)-mtd1.bin," \
-	    -e "s,@BOARDFAMILY@,$(BOARDFAMILY)," \
 	    $< >$@
 
 sam-ba: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin
