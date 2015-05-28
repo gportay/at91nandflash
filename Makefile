@@ -38,7 +38,7 @@ at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG)
 	make -C at91bootstrap $(DEFCONFIG)
 
 at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
-	@echo -e "\e[1mCompiling $@...\e[0m"
+	@echo -e "\e[1mCompiling at91bootstrap...\e[0m"
 	make -C at91bootstrap
 	touch $@
 
