@@ -31,6 +31,8 @@ include $(BOARD).inc
 
 .PHONY: all clean mrproper sam-ba
 
+.SECONDARY: at91bootstrap/binaries/at91bootstrap.bin at91bootstrap/.config
+
 all: bootstrap ubi
 
 at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG)
@@ -40,10 +42,13 @@ at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(DEFCONFIG)
 at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 	@echo -e "\e[1mCompiling at91bootstrap...\e[0m"
 	make -C at91bootstrap
-	touch $@
+	rm $@
 
-$(at91board)-$(at91suffix).bin: at91bootstrap/binaries/at91bootstrap.bin
-	cp at91bootstrap/binaries/$(@F) .
+at91bootstrap/binaries/$(at91board)-$(at91suffix).bin: at91bootstrap/binaries/at91bootstrap.bin
+	mv at91bootstrap/.config at91bootstrap/.config-$(BOARD)
+
+$(at91board)-$(at91suffix).bin: at91bootstrap/binaries/$(at91board)-$(at91suffix).bin
+	cp $< $@
 
 initramfs.cpio:
 	make -C initramfs
