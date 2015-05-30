@@ -50,23 +50,7 @@ check::
 		&& ( echo "sam-ba: Mismatch board-type '$(BOARDTYPE)'!" >&2; exit 1 )
 	echo "checked!"
 
-include at91bootstrap.mk initramfs.mk
-
-$(IMAGE): initramfs.cpio
-	@echo "Generating $@..."
-	make -C initramfs kernel LINUXDIR=$(LINUXDIR)
-	ln -sf initramfs/$@
-
-kernel: $(IMAGE)
-	ln -sf initramfs/$< $@
-
-%.dtb:
-	@echo "Generating $@..."
-	make -C initramfs $@
-	ln -sf initramfs/$@
-
-dtb: $(DTB).dtb
-	ln -sf initramfs/$< $@
+include at91bootstrap.mk initramfs.mk kernel.mk
 
 persistant:
 	install -d $@
