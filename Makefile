@@ -20,10 +20,6 @@ KERNEL_SPARE_VOLNAME	?= $(KERNEL_VOLNAME)-spare
 DTB_VOLNAME		?= dtb
 DTB_SPARE_VOLNAME	?= $(DTB_VOLNAME)-spare
 
-LINUXDIR	?= linux
-IMAGE		?= zImage
-DTB		?= $(shell echo $(BOARD) | sed -e '/at91-sam9/s,at91-,at91,' -e '/at91-sama5d3[1-6]ek/s,at91-,,')
-
 MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
 UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
 
@@ -50,23 +46,7 @@ check::
 		&& ( echo "sam-ba: Mismatch board-type '$(BOARDTYPE)'!" >&2; exit 1 )
 	echo "checked!"
 
-include at91bootstrap.mk initramfs.mk
-
-$(IMAGE): initramfs.cpio
-	@echo "Generating $@..."
-	make -C initramfs kernel LINUXDIR=$(LINUXDIR)
-	ln -sf initramfs/$@
-
-kernel: $(IMAGE)
-	ln -sf initramfs/$< $@
-
-%.dtb:
-	@echo "Generating $@..."
-	make -C initramfs $@
-	ln -sf initramfs/$@
-
-dtb: $(DTB).dtb
-	ln -sf initramfs/$< $@
+include at91bootstrap.mk initramfs.mk kernel.mk
 
 persistant:
 	install -d $@
@@ -124,7 +104,7 @@ install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandf
 	for file in $?; do install $$file $(DESTDIR)/$(PREFIX)/$(BOARD); done
 
 clean::
-	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(IMAGE) kernel *.dtb dtb $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
+	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
 	rm -f persistant.ubifs *.ubi *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
