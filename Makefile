@@ -20,7 +20,6 @@ KERNEL_SPARE_VOLNAME	?= $(KERNEL_VOLNAME)-spare
 DTB_VOLNAME		?= dtb
 DTB_SPARE_VOLNAME	?= $(DTB_VOLNAME)-spare
 
-LINUXDIR	?= linux
 IMAGE		?= zImage
 DTB		?= $(shell echo $(BOARD) | sed -e '/at91-sam9/s,at91-,at91,' -e '/at91-sama5d3[1-6]ek/s,at91-,,')
 

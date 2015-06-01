@@ -63,10 +63,10 @@ kernel_% linux_%:
 $(KOUTPUT)/arch/arm/boot/dts/%.dtb:
 	make -C linux ARCH=arm O=$(CURDIR)/$(KOUTPUT) $(<F)
 
-$(BOARD).dtb: $(KOUTPUT)/arch/arm/boot/dts/$(BOARD).dtb
+$(DTB).dtb: $(KOUTPUT)/arch/arm/boot/dts/$(DTB).dtb
 	cp $< .
 
-dtb: $(BOARD).dtb
+dtb: $(DTB).dtb
 	ln -sf $< $@
 
 dtbs: linux_dtbs
