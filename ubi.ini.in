@@ -1,27 +1,27 @@
 [dtb]
 mode=ubi
-image=dtb
+image=@DTB@
 vol_id=0
 vol_type=static
 vol_name="dtb"
 
 [dtb-spare]
 mode=ubi
-image=dtb
+image=@DTB@
 vol_id=1
 vol_type=static
 vol_name="dtb-spare"
 
 [kernel]
 mode=ubi
-image=kernel
+image=@KERNEL@
 vol_id=2
 vol_type=static
 vol_name="kernel"
 
 [kernel-spare]
 mode=ubi
-image=kernel
+image=@KERNEL@
 vol_id=3
 vol_type=static
 vol_name="kernel-spare"

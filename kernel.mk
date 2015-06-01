@@ -59,7 +59,6 @@ $(IMAGE)-initramfs-$(BOARD).bin: $(KOUTPUT)/arch/arm/boot/$(IMAGE)
 	cp $< $@
 
 kernel: $(IMAGE)-initramfs-$(BOARD).bin
-	ln -sf $< $@
 
 kernel_% linux_%:
 	make -C linux ARCH=arm O=$(CURDIR)/$(KOUTPUT) $*
@@ -71,7 +70,6 @@ $(DTB).dtb: $(KOUTPUT)/arch/arm/boot/dts/$(DTB).dtb
 	cp $< .
 
 dtb: $(DTB).dtb
-	ln -sf $< $@
 
 dtbs: linux_dtbs
 
@@ -85,7 +83,7 @@ kernel_clean linux_clean:
 	make -C linux mrproper
 
 clean::
-	rm -f $(IMAGE)-initramfs-$(BOARD).bin kernel $(DTB).dtb dtb
+	rm -f $(IMAGE)-initramfs-$(BOARD).bin $(DTB).dtb
 
 cleanall::
 	rm -rf $(KOUTPUT)/

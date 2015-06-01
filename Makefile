@@ -55,7 +55,12 @@ persistant.ubifs: persistant
 	@echo "Generating persistant.ubifs..."
 	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
 
-$(BOARD).ubi: ubi.ini kernel dtb persistant.ubifs
+$(BOARD).ini: ubi.ini.in
+	sed -e "s,@KERNEL@,$(IMAGE)-initramfs-$(BOARD).bin," \
+	    -e "s,@DTB@,$(DTB).dtb," \
+	    $< >$@
+
+$(BOARD).ubi: $(BOARD).ini kernel dtb persistant.ubifs
 	@echo "Generating $@..."
 	ubinize $(UBINIZEOPTS) --output $@ $<
 
@@ -104,10 +109,10 @@ install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandf
 	for file in $?; do install $$file $(DESTDIR)/$(PREFIX)/$(BOARD); done
 
 clean::
-	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(BOARD).ubi $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
+	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(BOARD).ubi $(BOARD).ini $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
-	rm -f persistant.ubifs *.ubi *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
+	rm -f persistant.ubifs *.ubi *.ini *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
 	rm -Rf persistant
 
 mrproper:: reallyclean
