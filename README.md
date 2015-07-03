@@ -22,3 +22,9 @@ Your are now ready to build and flash your *AT91-board* using *SAM-BA*!
 
     $ make && make sam-ba
 Enjoy!
+
+---
+**PS**: Do no forget to run...
+
+    $ make help
+... to check for what you can do with the [Makefile](https://raw.githubusercontent.com/gazoo74/at91nandflash/master/Makefile)!
