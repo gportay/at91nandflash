@@ -37,7 +37,7 @@ KDEFCONFIG	?= $(kdefconfig)
 DTB		?= $(shell echo $(BOARD) | sed -e '/at91-sam9/s,at91-,at91,' -e '/at91-sama5d3[1-6]ek/s,at91-,,')
 KOUTPUT		?= $(OUTPUTDIR)/linux-$(karch)-$(ksoc)
 
-SILENT:: linux/Makefile
+.SILENT:: linux/Makefile
 
 linux/Makefile:
 	echo "You need to provide your own kernel sources into the $(CURDIR)/$(@D) directory!" >&2
