@@ -3,6 +3,7 @@ PATCHLEVEL	 = 0
 SUBLEVEL	 = 0
 EXTRAVERSION	 = .1
 NAME		 = Charlie Hebdo
+RELEASE		 = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
 CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
@@ -40,11 +41,14 @@ export CROSS_COMPILE
 
 .PHONY:: all clean reallyclean mrproper sam-ba
 
-.SILENT:: check
+.SILENT:: version check
 
 .SECONDARY:: at91bootstrap/binaries/at91bootstrap.bin at91bootstrap/.config
 
 all:: bootstrap ubi
+
+version:
+	echo "$(RELEASE)"
 
 check::
 	echo -n "$(BOARD): "
