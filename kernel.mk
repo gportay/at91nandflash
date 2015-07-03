@@ -56,7 +56,7 @@ $(KOUTPUT)/.config: linux/Makefile
 
 $(KOUTPUT)/arch/arm/boot/$(KIMAGE): initramfs.cpio $(KOUTPUT)/.config
 	@echo "Compiling $(@F)..."
-	make -C linux O=$(CURDIR)/$(KOUTPUT) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) CONFIG_INITRAMFS_SOURCE=$(CURDIR)/$< $(KIMAGE)
+	make -C linux O=$(CURDIR)/$(KOUTPUT) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) CONFIG_INITRAMFS_SOURCE=$(CURDIR)/$< $(@F)
 
 $(KIMAGE)-initramfs-$(BOARD).bin: $(KOUTPUT)/arch/arm/boot/$(KIMAGE)
 	cp $< $@
