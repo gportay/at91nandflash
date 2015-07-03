@@ -126,10 +126,6 @@ $(BOARD)-sam-ba.bat:
 	echo "sam-ba.exe \\usb\\ARM0 $(BOARDTYPE) $(BOARD)-nandflash4sam-ba.tcl" >$@
 	chmod a+x $@
 
-
-%.bin:
-	ln -sf $< $@
-
 $(BOARD)-nandflash.tar $(BOARD)-nandflash.tgz $(BOARD)-nandflash.zip: $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin $(BOARD)-nandflash4sam-ba.tcl nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 tar tgz zip:
@@ -156,3 +152,6 @@ mrproper:: reallyclean
 
 %.zip:
 	zip -9 $@ $?
+
+%.bin:
+	cp $< $@
