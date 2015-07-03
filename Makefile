@@ -27,8 +27,14 @@ DEVICE		?= /dev/ttyACM0
 PREFIX		?= /opt/at91/nandflash
 
 sam_ba_bin	?= $(shell uname -m | sed -e 's,^[a-zA-Z0-9+-]*,sam-ba,')
-at91version	?= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSION/s,[^0-9.]*,,p" at91bootstrap/Makefile; fi)
-at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91version),' -e 's,_,-,g')
+at91version	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
+at91revision	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^REVISION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
+ifeq ($(at91revision),)
+at91release	:= $(at91version)
+else
+at91release	:= $(at91version)-$(at91revision)
+endif
+at91suffix	?= $(shell echo $(defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91release),' -e 's,_,-,g')
 
 export CROSS_COMPILE
 
