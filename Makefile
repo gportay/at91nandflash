@@ -41,7 +41,7 @@ export CROSS_COMPILE
 
 .PHONY:: all clean reallyclean mrproper sam-ba
 
-.SILENT:: version check
+.SILENT:: version help check
 
 .SECONDARY:: at91bootstrap/binaries/at91bootstrap.bin at91bootstrap/.config
 
@@ -49,6 +49,31 @@ all:: bootstrap ubi
 
 version:
 	echo "$(RELEASE)"
+
+help::
+	echo -e "\$$ make version\t\t\t\tto display version."
+	echo -e "\$$ make help\t\t\t\tto display this message."
+	echo -e "\$$ make kernel [KIMAGE=zImage]\t\tto build a kernel image."
+	echo -e "\$$ make dtb|dtbs\t\t\t\tto build a dtb or all dbts images."
+	echo -e "\$$ make kernel|linux_xxx\t\t\tto run linux kernel xxx rule."
+	echo -e "\$$ make at91boostrap_xxx\t\t\tto run at91bootstrap xxx rule."
+	echo -e "\$$ make [BOARD=$(BOARD)]\t\tto build the NAND image (without OOB)."
+	echo -e "\$$ make install [DESTDIR=\$$PWD]\t\tto install output into \$$DESTDIR."
+	echo -e "\$$ make tar|tgz|zip [DESTDIR=\$$PWD]\tto make an archive of outputs into \$$DESTDIR."
+	echo -e "\$$ make sam-ba [DEVICE=$(DEVICE)]\tto flash the NAND image (without OOB) into device $(DEVICE)."
+	echo -e "\$$ make clean [BOARD=$(BOARD)]\tto clean workspace from $(BOARD) outputs."
+	echo -e "\$$ make reallyclean\t\t\tto clean workspace from all board outputs."
+	echo -e "\$$ make mrproper\t\t\t\tto clean workspace from everything."
+	echo -e ""
+	echo -e "Extra variables:"
+	echo -e "CROSS_COMPILE:                          Sets the cross-compiler (bootstrap and kernel)."
+	echo -e "KIMAGE:                                 Set kernel image type (kernel)."
+	echo -e "KDEFCONFIG:                             Specifies defconfig (kernel)."
+	echo -e "AT91DEFCONFIG:                          Specifies defconfig (bootstrap)."
+	echo -e "BOARD:                                  Specifies the target."
+	echo -e "BOARDTYPE:                              Specifies the board setup (sam-ba)."
+	echo -e "MKFSUBIFSOPTS:                          Set mkfs.ubifs options (output)."
+	echo -e "UBINIZEOPTS:                            Set ubinize options (output)."
 
 check::
 	echo -n "$(BOARD): "
