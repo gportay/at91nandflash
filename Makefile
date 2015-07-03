@@ -101,14 +101,10 @@ $(BOARD)-sam-ba.bat:
 %.bin:
 	ln -sf $< $@
 
-tar: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
-	tar hcf $(BOARD).$@ $?
+$(BOARD)-nandflash.tar $(BOARD)-nandflash.tgz $(BOARD)-nandflash.zip: $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin $(BOARD)-nandflash4sam-ba.tcl nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
-tgz: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
-	tar hczf $(BOARD).$@ $?
-
-zip: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
-	zip -9 $(BOARD).$@ $?
+tar tgz zip:
+	make -f Makefile $(BOARD)-nandflash.$@
 
 install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 	install -d $(DESTDIR)$(PREFIX)/$(BOARD)
@@ -122,3 +118,12 @@ reallyclean:: clean
 	rm -Rf persistent
 
 mrproper:: reallyclean
+
+%.tar:
+	tar hcf $@ $?
+
+%.tar.gz %.tgz:
+	tar hczf $@ $?
+
+%.zip:
+	zip -9 $@ $?
