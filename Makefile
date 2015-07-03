@@ -54,11 +54,11 @@ check::
 
 include at91bootstrap.mk initramfs.mk kernel.mk
 
-persistant:
+persistent:
 	install -d $@
 
-persistant.ubifs: persistant
-	@echo "Generating persistant.ubifs..."
+persistent.ubifs: persistent
+	@echo "Generating persistent.ubifs..."
 	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
 
 $(BOARD).ini: ubi.ini.in
@@ -66,7 +66,7 @@ $(BOARD).ini: ubi.ini.in
 	    -e "s,@DTB@,$(DTB).dtb," \
 	    $< >$@
 
-$(BOARD).ubi: $(BOARD).ini kernel dtb persistant.ubifs
+$(BOARD).ubi: $(BOARD).ini kernel dtb persistent.ubifs
 	@echo "Generating $@..."
 	ubinize $(UBINIZEOPTS) --output $@ $<
 
@@ -118,7 +118,7 @@ clean::
 	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(BOARD).ubi $(BOARD).ini $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
-	rm -f persistant.ubifs *.ubi *.ini *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
-	rm -Rf persistant
+	rm -f persistent.ubifs *.ubi *.ini *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
+	rm -Rf persistent
 
 mrproper:: reallyclean

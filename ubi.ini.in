@@ -26,11 +26,11 @@ vol_id=3
 vol_type=static
 vol_name="kernel-spare"
 
-[persistant]
+[persistent]
 mode=ubi
-image=persistant.ubifs
+image=persistent.ubifs
 vol_size=3MiB
 vol_id=4
-vol_name="persistant"
+vol_name="persistent"
 vol_alignement=1
 vol_flags=autoresize
