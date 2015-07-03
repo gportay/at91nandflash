@@ -136,7 +136,7 @@ install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandf
 	for file in $?; do install $$file $(DESTDIR)/$(PREFIX)/$(BOARD); done
 
 clean::
-	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio $(BOARD).ubi $(BOARD).ini $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
+	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio* $(BOARD).ubi $(BOARD).ini $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
 	rm -f persistent.ubifs *.ubi *.ini *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip
