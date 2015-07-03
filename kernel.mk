@@ -32,7 +32,7 @@ endif
 endif
 endif
 
-IMAGE		?= zImage
+KIMAGE		?= zImage
 DTB		?= $(shell echo $(BOARD) | sed -e '/at91-sam9/s,at91-,at91,' -e '/at91-sama5d3[1-6]ek/s,at91-,,')
 KOUTPUT		?= $(OUTPUTDIR)/linux-$(karch)-$(ksoc)
 
@@ -53,14 +53,14 @@ $(KOUTPUT)/.config: linux/Makefile
 	cd linux && ARCH=arm scripts/kconfig/merge_config.sh -O $(CURDIR)/$(KOUTPUT) $(CURDIR)/$@ $(CURDIR)/$(KOUTPUT)/$(karch)-$(ksoc)_defconfig
 	for cfg in $(KEXTRACFG); do grep -E "$$cfg" $(KOUTPUT)/$(karch)-$(ksoc)_defconfig; done
 
-$(KOUTPUT)/arch/arm/boot/$(IMAGE): initramfs.cpio $(KOUTPUT)/.config
+$(KOUTPUT)/arch/arm/boot/$(KIMAGE): initramfs.cpio $(KOUTPUT)/.config
 	@echo "Compiling $(@F)..."
-	make -C linux ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) CONFIG_INITRAMFS_SOURCE=$(CURDIR)/$< O=$(CURDIR)/$(KOUTPUT) $(IMAGE)
+	make -C linux ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) CONFIG_INITRAMFS_SOURCE=$(CURDIR)/$< O=$(CURDIR)/$(KOUTPUT) $(KIMAGE)
 
-$(IMAGE)-initramfs-$(BOARD).bin: $(KOUTPUT)/arch/arm/boot/$(IMAGE)
+$(KIMAGE)-initramfs-$(BOARD).bin: $(KOUTPUT)/arch/arm/boot/$(KIMAGE)
 	cp $< $@
 
-kernel: $(IMAGE)-initramfs-$(BOARD).bin
+kernel: $(KIMAGE)-initramfs-$(BOARD).bin
 
 kernel_% linux_%:
 	make -C linux ARCH=arm O=$(CURDIR)/$(KOUTPUT) $*
@@ -79,17 +79,17 @@ kernel_configure linux_configure:
 	make -f Makefile $(KOUTPUT)/.config
 
 kernel_compile linux_compile:
-	make -f Makefile $(KOUTPUT)/arch/arm/boot/$(IMAGE)
+	make -f Makefile $(KOUTPUT)/arch/arm/boot/$(KIMAGE)
 
 kernel_clean linux_clean:
 	make -C linux mrproper
 
 clean::
-	rm -f $(IMAGE)-initramfs-$(BOARD).bin $(DTB).dtb
+	rm -f $(KIMAGE)-initramfs-$(BOARD).bin $(DTB).dtb
 
 cleanall::
 	rm -rf $(KOUTPUT)/
 
 mrproper::
-	rm -f $(IMAGE)-initramfs-*.bin *.dtb
+	rm -f $(KIMAGE)-initramfs-*.bin *.dtb
 	rm -rf $(OUTPUTDIR)/linux-*/

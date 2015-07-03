@@ -56,7 +56,7 @@ persistant.ubifs: persistant
 	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
 
 $(BOARD).ini: ubi.ini.in
-	sed -e "s,@KERNEL@,$(IMAGE)-initramfs-$(BOARD).bin," \
+	sed -e "s,@KERNEL@,$(KIMAGE)-initramfs-$(BOARD).bin," \
 	    -e "s,@DTB@,$(DTB).dtb," \
 	    $< >$@
 
