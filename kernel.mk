@@ -76,6 +76,8 @@ dtb: $(DTB).dtb
 
 dtbs: linux_dtbs
 
+kernel_menuconfig linux_menuconfig:
+
 kernel_configure linux_configure:
 	make -f Makefile $(KOUTPUT)/.config
 
