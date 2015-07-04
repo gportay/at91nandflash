@@ -70,6 +70,7 @@ help::
 	echo -e "\$$ make mrproper\t\t\t\tto clean workspace from everything."
 	echo -e ""
 	echo -e "Extra variables:"
+	echo -e "CMDLINE:                                Overwrite the kernel command-line (bootstrap)."
 	echo -e "CROSS_COMPILE:                          Sets the cross-compiler (bootstrap and kernel)."
 	echo -e "KIMAGE:                                 Set kernel image type (kernel)."
 	echo -e "KDEFCONFIG:                             Specifies defconfig (kernel)."
