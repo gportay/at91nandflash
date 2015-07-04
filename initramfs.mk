@@ -1,9 +1,11 @@
 initramfs_%:
 	make -C initramfs $*
 
-initramfs.cpio%:
-	make -C initramfs initramfs.cpio$*
+initramfs.cpio% initrd.%:
+	make -C initramfs $@
 	mv initramfs/$@ .
+
+initrd.cpio initrd.cpio.gz initrd.squashfs:
 
 reallyclean::
 	make -C initramfs clean

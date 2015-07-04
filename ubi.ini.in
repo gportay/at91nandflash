@@ -26,11 +26,25 @@ vol_id=3
 vol_type=static
 vol_name="kernel-spare"
 
+[initrd]
+mode=ubi
+image=@INITRD@
+vol_id=4
+vol_type=static
+vol_name="initrd"
+
+[initrd-spare]
+mode=ubi
+image=@INITRD@
+vol_id=5
+vol_type=static
+vol_name="initrd-spare"
+
 [persistent]
 mode=ubi
 image=persistent.ubifs
 vol_size=3MiB
-vol_id=4
+vol_id=6
 vol_name="persistent"
 vol_alignement=1
 vol_flags=autoresize

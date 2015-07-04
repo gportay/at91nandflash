@@ -5,6 +5,8 @@ EXTRAVERSION	 = .2
 NAME		 = Charlie Hebdo
 RELEASE		 = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
+INITRD		?= 1
+
 CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
 board		:= $(shell echo $(BOARD) | sed -e '/sama5d/s,d3[13456],d3x,')
@@ -86,6 +88,14 @@ include at91bootstrap.mk initramfs.mk kernel.mk
 kernelimage	:= $(KIMAGE)-initramfs-$(BOARD).bin
 dtbimage	:= $(DTB).dtb
 
+ifeq ($(INITRD),1)
+rdimage		:= initrd.squashfs
+else
+rdimage		:= initramfs.cpio.gz
+KEXTRAARGS	+= CONFIG_INITRAMFS_SOURCE=$(CURDIR)/$(rdimage)
+KEXTRADEPS	+= $(rdimage)
+endif
+
 persistent:
 	install -d $@
 
@@ -96,9 +106,10 @@ persistent.ubifs: persistent
 $(BOARD).ini: ubi.ini.in
 	sed -e "s,@KERNEL@,$(kernelimage)," \
 	    -e "s,@DTB@,$(dtbimage)," \
+	    -e "s,@INITRD@,$(rdimage)," \
 	    $< >$@
 
-$(BOARD).ubi: $(BOARD).ini $(kernelimage) $(dtbimage) persistent.ubifs
+$(BOARD).ubi: $(BOARD).ini $(kernelimage) $(dtbimage) $(rdimage) persistent.ubifs
 	@echo "Generating $@..."
 	ubinize $(UBINIZEOPTS) --output $@ $<
 
@@ -139,7 +150,7 @@ install: $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-mtd0.bin $(BOARD)-mtd1.bin nandf
 	for file in $?; do install $$file $(DESTDIR)/$(PREFIX)/$(BOARD); done
 
 clean::
-	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio* $(BOARD).ubi $(BOARD).ini $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
+	rm -f $(at91board)-$(at91suffix).bin initramfs.cpio* initrd.* $(BOARD).ubi $(BOARD).ini $(BOARD)-mtd*.bin $(BOARD)-nandflash4sam-ba.tcl $(BOARD)-sam-ba.sh $(BOARD)-sam-ba.bat
 
 reallyclean:: clean
 	rm -f persistent.ubifs *.ubi *.ini *-mtd*.bin *-linux-image*-ubi-*.bin *-nandflash4sam-ba.tcl *-sam-ba.sh *-sam-ba.bat *.tar *.tgz *.zip

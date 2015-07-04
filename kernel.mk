@@ -54,9 +54,9 @@ $(KOUTPUT)/.config: linux/Makefile
 	cd linux && ARCH=arm scripts/kconfig/merge_config.sh -O $(CURDIR)/$(KOUTPUT) $(CURDIR)/$@ $(CURDIR)/$(KOUTPUT)/$(karch)-$(ksoc)_defconfig
 	for cfg in $(KEXTRACFG); do grep -E "$$cfg" $(KOUTPUT)/$(karch)-$(ksoc)_defconfig; done
 
-$(KOUTPUT)/arch/arm/boot/$(KIMAGE): initramfs.cpio $(KOUTPUT)/.config
+$(KOUTPUT)/arch/arm/boot/$(KIMAGE): $(KOUTPUT)/.config $(KEXTRADEPS)
 	@echo "Compiling $(@F)..."
-	make -C linux O=$(CURDIR)/$(KOUTPUT) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) CONFIG_INITRAMFS_SOURCE=$(CURDIR)/$< $(@F)
+	make -C linux O=$(CURDIR)/$(KOUTPUT) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) $(@F) $(KEXTRAARGS)
 
 $(KIMAGE)-initramfs-$(BOARD).bin: $(KOUTPUT)/arch/arm/boot/$(KIMAGE)
 	cp $< $@
