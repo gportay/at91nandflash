@@ -28,7 +28,7 @@ at91bootstrap/binaries/at91bootstrap.bin: at91bootstrap/.config
 	rm $@
 
 at91bootstrap/binaries/$(at91board)-$(at91suffix).bin: at91bootstrap/binaries/at91bootstrap.bin
-	mv at91bootstrap/.config at91bootstrap/.config-$(BOARD)
+	cp at91bootstrap/.config at91bootstrap/.config-$(BOARD)
 
 $(at91board)-$(at91suffix).bin: at91bootstrap/binaries/$(at91board)-$(at91suffix).bin
 	cp $< $@
