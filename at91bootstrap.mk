@@ -41,6 +41,12 @@ at91bootstrap_reconfigure:
 	rm -f at91bootstrap/.config
 	make -f Makefile at91bootstrap/.config
 
+at91bootstrap_compile: at91bootstrap/binaries/at91bootstrap.bin
+
+at91bootstrap_recompile: at91bootstrap/.config
+	touch $<
+	make -C at91bootstrap
+
 at91bootstrap_%:
 	make -C at91bootstrap $*
 
