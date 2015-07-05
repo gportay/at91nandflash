@@ -1,8 +1,8 @@
 initramfs_%:
 	make -C initramfs $*
 
-initramfs.cpio:
-	make -C initramfs
+initramfs.cpio%:
+	make -C initramfs initramfs.cpio$*
 	cp initramfs/$@ .
 
 reallyclean::
