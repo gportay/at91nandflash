@@ -3,7 +3,7 @@ initramfs_%:
 
 initramfs.cpio%:
 	make -C initramfs initramfs.cpio$*
-	cp initramfs/$@ .
+	mv initramfs/$@ .
 
 reallyclean::
 	make -C initramfs clean
