@@ -4,6 +4,8 @@ ubi_defconfig: ubi_defconfig.in
 	    -e "s#@KERNEL_SPARE_VOLNAME@#$(KERNEL_SPARE_VOLNAME)#" \
 	    -e "s#@DTB_VOLNAME@#$(DTB_VOLNAME)#" \
 	    -e "s#@DTB_SPARE_VOLNAME@#$(DTB_SPARE_VOLNAME)#" \
+	    -e "s#@UBOOT_VOLNAME@#$(UBOOT_VOLNAME)#" \
+	    -e "s#@UBOOT_SPARE_VOLNAME@#$(UBOOT_SPARE_VOLNAME)#" \
 	    $< >$@
 
 at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_defconfig: at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig

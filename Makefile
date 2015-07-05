@@ -5,6 +5,7 @@ EXTRAVERSION	 = .2
 NAME		 = Charlie Hebdo
 RELEASE		 = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
+UBOOT		?= 1
 INITRD		?= 1
 
 CROSS_COMPILE	?= arm-linux-gnueabi-
@@ -14,7 +15,12 @@ BOARDTYPE	?= $(shell echo $(board) | sed -e 's,^at91-,at91,' -e '/m10g45/s,m10g4
 BOARDTYPES	:= at91sam9260-ek at91sam9261-ek at91sam9263-ek at91sam9g10-ek at91sam9g20-ek at91sam9g45-ekes at91sam9m10-ekes at91sam9m10-g45-ek at91sam9n12-ek at91sam9rl64-ek at91sam9g15-ek at91sam9g25-ek at91sam9g35-ek at91sam9x25-ek at91sam9x35-ek at91sama5d3x-xplained at91sama5d3x-ek at91sama5d4x-ek
 
 at91board	:= $(shell echo $(board) | sed -e '/sam9[gx][123]5/s,[gx][123]5,x5,' -e '/sam9/s,^at91-,at91,' -e '/sama5/s,^at91-*,,')
+kboard		:= $(subst _,-,$(at91board))
+ifeq ($(UBOOT),1)
+at91defconfig	:= nf_uboot_defconfig
+else
 at91defconfig	:= nf_linux_image_dt_defconfig
+endif
 AT91DEFCONFIG	?= $(at91board)$(at91defconfig)
 
 CMDLINE			?= console=ttyS0,115200 mtdparts=atmel_nand:128k(bootstrap)ro,-(UBI) ubi.mtd=UBI
@@ -85,8 +91,13 @@ check::
 
 include at91bootstrap.mk initramfs.mk kernel.mk
 
+ifeq ($(UBOOT),1)
+ubootimage	:= u-boot-$(kboard).bin
+kernelimage	:= $(KIMAGE)-$(kboard).bin
+else
 kernelimage	:= $(KIMAGE)-initramfs-$(BOARD).bin
 dtbimage	:= $(DTB).dtb
+endif
 
 ifeq ($(INITRD),1)
 rdimage		:= initrd.squashfs
@@ -107,6 +118,7 @@ $(BOARD).ini: ubi.ini.in
 	sed -e "s,@KERNEL@,$(kernelimage)," \
 	    -e "s,@DTB@,$(dtbimage)," \
 	    -e "s,@INITRD@,$(rdimage)," \
+	    -e "s,@UBOOT@,$(ubootimage)," \
 	    $< >$@
 
 $(BOARD).ubi: $(BOARD).ini $(kernelimage) $(dtbimage) $(rdimage) persistent.ubifs

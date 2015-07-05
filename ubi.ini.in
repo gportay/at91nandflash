@@ -48,3 +48,17 @@ vol_id=6
 vol_name="persistent"
 vol_alignement=1
 vol_flags=autoresize
+
+[u-boot]
+mode=ubi
+image=@UBOOT@
+vol_id=7
+vol_type=static
+vol_name="u-boot"
+
+[u-boot-spare]
+mode=ubi
+image=@UBOOT@
+vol_id=8
+vol_type=static
+vol_name="u-boot-spare"
