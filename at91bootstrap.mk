@@ -35,6 +35,12 @@ $(at91board)-$(at91suffix).bin: at91bootstrap/binaries/$(at91board)-$(at91suffix
 
 at91bootstrap_menuconfig:
 
+at91bootstrap_configure: at91bootstrap/.config
+
+at91bootstrap_reconfigure:
+	rm -f at91bootstrap/.config
+	make -f Makefile at91bootstrap/.config
+
 at91bootstrap_%:
 	make -C at91bootstrap $*
 
