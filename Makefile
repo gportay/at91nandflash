@@ -83,6 +83,9 @@ check::
 
 include at91bootstrap.mk initramfs.mk kernel.mk
 
+kernelimage	:= $(KIMAGE)-initramfs-$(BOARD).bin
+dtbimage	:= $(DTB).dtb
+
 persistent:
 	install -d $@
 
@@ -91,11 +94,11 @@ persistent.ubifs: persistent
 	mkfs.ubifs $(MKFSUBIFSOPTS) --root $< --output $@
 
 $(BOARD).ini: ubi.ini.in
-	sed -e "s,@KERNEL@,$(KIMAGE)-initramfs-$(BOARD).bin," \
-	    -e "s,@DTB@,$(DTB).dtb," \
+	sed -e "s,@KERNEL@,$(kernelimage)," \
+	    -e "s,@DTB@,$(dtbimage)," \
 	    $< >$@
 
-$(BOARD).ubi: $(BOARD).ini kernel dtb persistent.ubifs
+$(BOARD).ubi: $(BOARD).ini $(kernelimage) $(dtbimage) persistent.ubifs
 	@echo "Generating $@..."
 	ubinize $(UBINIZEOPTS) --output $@ $<
 
