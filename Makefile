@@ -31,6 +31,8 @@ DTB_SPARE_VOLNAME	?= $(DTB_VOLNAME)-spare
 
 MKFSUBIFSOPTS	?= --leb-size 0x1f000 --min-io-size 0x800 --max-leb-cnt 2048
 UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
+MKENVIMAGEOPTS	?= -s 0x4200
+MKENVIMAGEOPTS	?= -s 0x4200 256K
 
 DEVICE		?= /dev/ttyACM0
 PREFIX		?= /opt/at91/nandflash
@@ -178,6 +180,9 @@ mrproper:: reallyclean
 
 %.zip:
 	zip -9 $@ $?
+
+u-boot-env.bin: u-boot-env.txt
+	mkenvimage $(MKENVIMAGEOPTS) -o $@ $<
 
 %.bin:
 	cp $< $@
