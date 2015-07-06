@@ -5,6 +5,10 @@ EXTRAVERSION	 = .2
 NAME		 = Charlie Hebdo
 RELEASE		 = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
 
+SSHOPTS		?=
+WGETOPTS	?= --no-check-certificate
+CURLOPTS	?= --insecure
+
 CROSS_COMPILE	?= arm-linux-gnueabi-
 BOARD		?= at91-sama5d3_xplained
 board		:= $(shell echo $(BOARD) | sed -e '/sama5d/s,d3[13456],d3x,')
@@ -146,6 +150,18 @@ reallyclean:: clean
 	rm -Rf persistent
 
 mrproper:: reallyclean
+
+file\://%:
+	@echo "Copying $(@F)..."
+	uri=$@; cp $${uri##*://} .
+
+ssh\://%:
+	@echo "Copying $(@F)..."
+	uri=$@; scp $(SSHOPTS) $${uri##*://} .
+
+https\://% http\://%:
+	@echo "Downloading $(@F)..."
+	wget $(WGETOPTS) $@
 
 %.tar:
 	tar hcf $@ $?
