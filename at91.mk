@@ -1,3 +1,5 @@
+#
+# Atmel SAMA5 boards
 ifeq (sama5,$(findstring sama5,$(BOARD)))
 karch		:= cortex-a5
 kdefconfig	:= sama5_defconfig
@@ -10,6 +12,8 @@ else
 ksoc		+= sama5d4
 KEXTRACFG	+= CONFIG_SOC_SAMA5D4=y
 endif
+#
+# Atmel SAM9 boards
 else
 kdefconfig	:= at91_dt_defconfig
 KEXTRACFG	+= CONFIG_SOC_SAM_V4_V5=y
@@ -24,12 +28,16 @@ karch		:= arm920
 ksoc		+= rm92000
 KEXTRACFG	+= CONFIG_ARCH_MULTI_V5=n
 KEXTRACFG	+= CONFIG_SOC_AT91SAM9=n
+#
+# Unknown board!
 else
 $(error linux: Unsupported board '$(BOARD)'!)
 endif
 endif
 endif
 
+#
+# Atmel AT91 boards
 board		:= $(shell echo $(BOARD) | sed -e '/sama5d/s,d3[13456],d3x,')
 at91board	:= $(shell echo $(board) | sed -e '/sam9[gx][123]5/s,[gx][123]5,x5,' -e '/sam9/s,^at91-,at91,' -e '/sama5/s,^at91-*,,')
 at91defconfig	:= nf_linux_image_dt_defconfig
