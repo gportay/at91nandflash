@@ -27,15 +27,6 @@ UBINIZEOPTS	?= --peb-size 0x20000 --min-io-size 0x800 --sub-page-size 0x800
 
 PREFIX		?= /opt/at91/nandflash
 
-at91version	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
-at91revision	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^REVISION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
-ifeq ($(at91revision),)
-at91release	:= $(at91version)
-else
-at91release	:= $(at91version)-$(at91revision)
-endif
-at91suffix	?= $(shell echo $(at91defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91release),' -e 's,_,-,g')
-
 export CROSS_COMPILE
 
 .PHONY:: all clean reallyclean mrproper

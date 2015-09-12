@@ -1,3 +1,12 @@
+at91version	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
+at91revision	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^REVISION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
+ifeq ($(at91revision),)
+at91release	:= $(at91version)
+else
+at91release	:= $(at91version)-$(at91revision)
+endif
+at91suffix	?= $(shell echo $(at91defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91release),' -e 's,_,-,g')
+
 ubi_defconfig: ubi_defconfig.in
 	sed -e "s#@CMDLINE@#$(CMDLINE)#" \
 	    -e "s#@KERNEL_VOLNAME@#$(KERNEL_VOLNAME)#" \
