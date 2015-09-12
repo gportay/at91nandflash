@@ -8,8 +8,10 @@ KEXTRACFG	+= CONFIG_SOC_SAM_V7=y
 ifeq (sama5d3,$(findstring sama5d3,$(BOARD)))
 ksoc		+= sama5d3
 KEXTRACFG	+= CONFIG_SOC_SAMA5D3=y
+KEXTRACFG	+= CONFIG_SOC_SAMA5D4=n
 else
 ksoc		+= sama5d4
+KEXTRACFG	+= CONFIG_SOC_SAMA5D3=n
 KEXTRACFG	+= CONFIG_SOC_SAMA5D4=y
 endif
 #
