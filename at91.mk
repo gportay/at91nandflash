@@ -31,18 +31,28 @@ ksoc		+= rm92000
 KEXTRACFG	+= CONFIG_ARCH_MULTI_V5=n
 KEXTRACFG	+= CONFIG_SOC_AT91SAM9=n
 #
+# Other manufacturer boards based on Atmel SoC
+else
+ifeq (at91-,$(findstring at91-,$(BOARD)))
+include boards/*.mk
+#
 # Unknown board!
 else
 $(error linux: Unsupported board '$(BOARD)'!)
 endif
 endif
 endif
+endif
 
 #
 # Atmel AT91 boards
+ifeq (,$(at91board))
 board		:= $(shell echo $(BOARD) | sed -e '/sama5d/s,d3[13456],d3x,')
 at91board	:= $(shell echo $(board) | sed -e '/sam9[gx][123]5/s,[gx][123]5,x5,' -e '/sam9/s,^at91-,at91,' -e '/sama5/s,^at91-*,,')
 at91defconfig	:= nf_linux_image_dt_defconfig
 AT91DEFCONFIG	?= $(at91board)$(at91defconfig)
+endif
 
+ifeq (,$(kboard))
 kboard		:= $(subst _,-,$(at91board))
+endif
