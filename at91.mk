@@ -1,35 +1,19 @@
 #
 # Atmel SAMA5 boards
 ifeq (sama5,$(findstring sama5,$(BOARD)))
-karch		:= cortex-a5
-kdefconfig	:= sama5_defconfig
-KEXTRACFG	+= CONFIG_ARCH_MULTI_V7=y
-KEXTRACFG	+= CONFIG_SOC_SAM_V7=y
 ifeq (sama5d3,$(findstring sama5d3,$(BOARD)))
 ksoc		+= sama5d3
-KEXTRACFG	+= CONFIG_SOC_SAMA5D3=y
-KEXTRACFG	+= CONFIG_SOC_SAMA5D4=n
 else
 ksoc		+= sama5d4
-KEXTRACFG	+= CONFIG_SOC_SAMA5D3=n
-KEXTRACFG	+= CONFIG_SOC_SAMA5D4=y
 endif
 #
 # Atmel SAM9 boards
 else
-kdefconfig	:= at91_dt_defconfig
-KEXTRACFG	+= CONFIG_SOC_SAM_V4_V5=y
 ifeq (sam9,$(findstring sam9,$(BOARD)))
-karch		:= arm926
 ksoc		+= sam9
-KEXTRACFG	+= CONFIG_ARCH_MULTI_V4T=n
-KEXTRACFG	+= CONFIG_SOC_AT91RM9200=n
 else
 ifeq (rm920,$(findstring rm920,$(BOARD)))
-karch		:= arm920
 ksoc		+= rm92000
-KEXTRACFG	+= CONFIG_ARCH_MULTI_V5=n
-KEXTRACFG	+= CONFIG_SOC_AT91SAM9=n
 #
 # Other manufacturer boards based on Atmel SoC
 else
@@ -43,6 +27,42 @@ endif
 endif
 endif
 endif
+
+#
+# Atmel SAMA5 SoC Familly
+ifeq (sama5,$(findstring sama5,$(ksoc)))
+karch		:= cortex-a5
+kdefconfig	:= sama5_defconfig
+KEXTRACFG	+= CONFIG_ARCH_MULTI_V7=y
+KEXTRACFG	+= CONFIG_SOC_SAM_V7=y
+# Atmel SAMA5D3 SoC
+ifeq (sama5d3,$(ksoc))
+KEXTRACFG	+= CONFIG_SOC_SAMA5D3=y
+KEXTRACFG	+= CONFIG_SOC_SAMA5D4=n
+# Atmel SAMA5D4 SoC
+else
+KEXTRACFG	+= CONFIG_SOC_SAMA5D3=n
+KEXTRACFG	+= CONFIG_SOC_SAMA5D4=y
+endif
+#
+# Atmel SAM9 SoC Familly
+else
+kdefconfig	:= at91_dt_defconfig
+KEXTRACFG	+= CONFIG_SOC_SAM_V4_V5=y
+ifeq (sam9,$(findstring sam9,$(ksoc)))
+karch		:= arm926
+KEXTRACFG	+= CONFIG_ARCH_MULTI_V4T=n
+KEXTRACFG	+= CONFIG_SOC_AT91RM9200=n
+else
+ifeq (rm920,$(findstring rm920,$(ksoc)))
+karch		:= arm920
+KEXTRACFG	+= CONFIG_ARCH_MULTI_V5=n
+KEXTRACFG	+= CONFIG_SOC_AT91SAM9=n
+endif
+endif
+endif
+
+KDEFCONFIG	?= $(kdefconfig)
 
 #
 # Atmel AT91 boards
