@@ -36,14 +36,14 @@ reallyclean::
 	rm -Rf $(builddir)/.build
 
 mrproper::
-	-make -C crosstool-ng uninstall
+	-make -C crosstool-ng uninstall MAKELEVEL=0
 	rm -Rf $(builddir)/
 
 bin/ct-ng: crosstool-ng/ct-ng
-	-make -C crosstool-ng install
+	-make -C crosstool-ng install MAKELEVEL=0
 
 crosstool-ng/ct-ng: crosstool-ng/Makefile
-	-make -C crosstool-ng
+	-make -C crosstool-ng MAKELEVEL=0
 
 crosstool-ng/Makefile: crosstool-ng/configure
 	( cd crosstool-ng && ./configure --prefix=$(PWD) )
@@ -52,17 +52,17 @@ crosstool-ng/configure: crosstool-ng/configure.ac
 	( cd crosstool-ng && autoreconf -vif )
 
 crosstool-ng_%:
-	make -C crosstool-ng $*
+	make -C crosstool-ng $* MAKELEVEL=0
 
 crosstool-ng_configure: crosstool-ng/configure
 
 crosstool-ng_install: bin/ct-ng
 
 reallyclean::
-	-make -C crosstool-ng uninstall
-	-make -C crosstool-ng clean
+	-make -C crosstool-ng uninstall MAKELEVEL=0
+	-make -C crosstool-ng clean MAKELEVEL=0
 
 mrproper::
-	-make -C crosstool-ng mrproper
+	-make -C crosstool-ng mrproper MAKELEVEL=0
 
 endif
