@@ -1,7 +1,10 @@
-initramfs_%:
+initramfs/.config:
+	make -C initramfs allnoconfig
+
+initramfs_%: initramfs/.config
 	make -C initramfs $*
 
-initramfs.cpio:
+initramfs.cpio: initramfs/.config
 	make -C initramfs
 	mv initramfs/$@ .
 
