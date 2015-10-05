@@ -4,3 +4,6 @@
 [submodule "initramfs"]
 	path = initramfs
 	url = https://github.com/gazoo74/initramfs.git
+[submodule "crosstool-ng"]
+	path = crosstool-ng
+	url = https://github.com/crosstool-ng/crosstool-ng
