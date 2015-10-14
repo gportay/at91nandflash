@@ -33,7 +33,7 @@ at91bootstrap/binaries/$(at91board)-$(at91suffix).bin: at91bootstrap/binaries/at
 $(at91board)-$(at91suffix).bin: at91bootstrap/binaries/$(at91board)-$(at91suffix).bin
 	cp $< $@
 
-at91bootstrap_menuconfig:
+at91bootstrap_menuconfig at91bootstrap_clean at91bootstrap_mrproper:
 
 at91bootstrap_configure: at91bootstrap/.config
 
