@@ -1,3 +1,5 @@
+.SECONDARY:: at91bootstrap/binaries/at91bootstrap.bin at91bootstrap/.config
+
 at91version	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^VERSION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
 at91revision	:= $(shell if test -e at91bootstrap/Makefile; then sed -ne "/^REVISION/s,.*=\s*,,p" at91bootstrap/Makefile; fi)
 ifeq ($(at91revision),)

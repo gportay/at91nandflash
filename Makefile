@@ -33,7 +33,7 @@ export CROSS_COMPILE
 
 .SILENT:: version help check
 
-.SECONDARY:: at91bootstrap/binaries/at91bootstrap.bin at91bootstrap/.config
+.SECONDARY::
 
 include crosstool-ng.mk
 
