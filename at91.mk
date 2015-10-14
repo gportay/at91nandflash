@@ -2,18 +2,18 @@
 # Atmel SAMA5 boards
 ifeq (sama5,$(findstring sama5,$(BOARD)))
 ifeq (sama5d3,$(findstring sama5d3,$(BOARD)))
-ksoc		+= sama5d3
+ksoc		:= sama5d3
 else
-ksoc		+= sama5d4
+ksoc		:= sama5d4
 endif
 #
 # Atmel SAM9 boards
 else
 ifeq (sam9,$(findstring sam9,$(BOARD)))
-ksoc		+= sam9
+ksoc		:= sam9
 else
 ifeq (rm920,$(findstring rm920,$(BOARD)))
-ksoc		+= rm92000
+ksoc		:= rm92000
 #
 # Other manufacturer boards based on Atmel SoC
 else
