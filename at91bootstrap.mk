@@ -7,7 +7,7 @@ at91release	:= $(at91version)
 else
 at91release	:= $(at91version)-$(at91revision)
 endif
-at91suffix	?= $(shell echo $(at91defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-ubi-$(at91release),' -e 's,_,-,g')
+at91suffix	?= $(shell echo $(at91defconfig) | sed -e 's,nf_,nandflashboot-,' -e 's,_defconfig,-$(at91release),' -e 's,_,-,g')
 
 ubi_defconfig: ubi_defconfig.in
 	sed -e "s#@CMDLINE@#$(CMDLINE)#" \
@@ -17,6 +17,7 @@ ubi_defconfig: ubi_defconfig.in
 	    -e "s#@DTB_SPARE_VOLNAME@#$(DTB_SPARE_VOLNAME)#" \
 	    $< >$@
 
+ifeq (,$(findstring ubi,$(AT91DEFCONFIG)))
 at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_defconfig: at91bootstrap/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig
 
 at91bootstrap/board/$(at91board)/%_defconfig:
@@ -26,6 +27,7 @@ at91bootstrap/board/$(at91board)/$(AT91DEFCONFIG): at91bootstrap/board/$(at91boa
 	sed -e '/CONFIG_LOAD_UBOOT/d' \
 	    -e '$$aCONFIG_LOAD_LINUX=y' \
 	    $< >$@
+endif
 
 at91bootstrap/.config: at91bootstrap/board/$(at91board)/$(AT91DEFCONFIG) ubi_defconfig
 	@echo "Configuring at91bootstrap using $<..."
